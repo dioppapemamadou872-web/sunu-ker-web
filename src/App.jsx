@@ -1,0 +1,42 @@
+import { Routes, Route } from 'react-router-dom';
+import './App.css';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import Accueil from './pages/Accueil';
+import Logements from './pages/Logements';
+import LogementDetail from './pages/LogementDetail';
+import Publier from './pages/Publier';
+import Admin from './pages/Admin';
+import Contact from './pages/Contact';
+import APropos from './pages/APropos';
+import MentionsLegales from './pages/MentionsLegales';
+import InscriptionProprietaire from './pages/InscriptionProprietaire';
+import ConnexionProprietaire from './pages/ConnexionProprietaire';
+import MonEspace from './pages/MonEspace';
+
+
+function App() {
+  return (
+    <div className="app">
+      <Navbar />
+      <div className="app-content">
+        <Routes>
+          <Route path="/" element={<Accueil />} />
+          <Route path="/logements" element={<Logements />} />
+          <Route path="/logements/:id" element={<LogementDetail />} />
+          <Route path="/publier" element={<Publier />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/a-propos" element={<APropos />} />
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/inscription" element={<InscriptionProprietaire />} />
+          <Route path="/connexion" element={<ConnexionProprietaire />} />
+          <Route path="/mon-espace" element={<MonEspace />} />
+        </Routes>
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
+export default App;

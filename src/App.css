@@ -577,6 +577,31 @@
 @media (max-width: 768px) {
   .navbar-links { display: none; }
   .menu-burger { display: flex; }
+
+  .navbar-links.ouvert {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 24px;
+    gap: 4px;
+    box-shadow: var(--shadow);
+    z-index: 40;
+  }
+
+  .navbar-links.ouvert a {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .navbar-links.ouvert a:last-child {
+    border-bottom: none;
+  }
+
   .bento-grid { grid-template-columns: 1fr 1fr; }
   .bento-stats, .bento-avantages { grid-column: span 2; }
   .search-bar { flex-direction: column; border-radius: 20px; }

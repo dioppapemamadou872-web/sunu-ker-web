@@ -3,7 +3,6 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useLogements } from '../context/LogementsContext';
 import SearchBar from '../components/SearchBar';
 import LogementCard from '../components/LogementCard';
-import { API_URL, API_BASE } from '../config';
 
 function Logements() {
   const [searchParams] = useSearchParams();
@@ -29,9 +28,6 @@ function Logements() {
     <div>
       <div className="filter-bar-compact">
         <SearchBar />
-      </div>
-      <div style={{ background: 'red', color: 'white', padding: '12px', margin: '12px', fontSize: '12px', wordBreak: 'break-all' }}>
-        DEBUG — API_URL: {API_URL} | API_BASE: {API_BASE}
       </div>
 
       <div className="logement-grid">

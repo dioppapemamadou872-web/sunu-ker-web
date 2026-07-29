@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImagePlus, X } from 'lucide-react';
+import { ImagePlus, X, IdCard, FileText } from 'lucide-react';
 import { secteurs, typesLogement } from '../data/logements';
 
 function FormulaireLogement({ onPublier }) {
@@ -12,6 +12,14 @@ function FormulaireLogement({ onPublier }) {
   const [description, setDescription] = useState('');
   const [photos, setPhotos] = useState([]);
   const [previews, setPreviews] = useState([]);
+
+  const [pieceIdentiteRecto, setPieceIdentiteRecto] = useState(null);
+  const [pieceIdentiteVerso, setPieceIdentiteVerso] = useState(null);
+  const [justificatifPropriete, setJustificatifPropriete] = useState(null);
+
+  function bloquerScroll(e) {
+    e.target.blur();
+  }
 
   function gererSelectionPhotos(e) {
     const fichiers = Array.from(e.target.files).slice(0, 8);
@@ -27,6 +35,11 @@ function FormulaireLogement({ onPublier }) {
   function handleSubmit(e) {
     e.preventDefault();
 
+    if (!pieceIdentiteRecto || !pieceIdentiteVerso || !justificatifPropriete) {
+      alert('Merci de fournir votre pièce d\'identité (recto/verso) et un justificatif de propriété — obligatoires pour la vérification de votre annonce.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('titre', titre);
     formData.append('secteur', secteur);
@@ -36,6 +49,9 @@ function FormulaireLogement({ onPublier }) {
     formData.append('salons', salons);
     formData.append('description', description);
     photos.forEach((photo) => formData.append('photos', photo));
+    formData.append('pieceIdentiteRecto', pieceIdentiteRecto);
+    formData.append('pieceIdentiteVerso', pieceIdentiteVerso);
+    formData.append('justificatifPropriete', justificatifPropriete);
 
     onPublier(formData);
 
@@ -44,6 +60,9 @@ function FormulaireLogement({ onPublier }) {
     setDescription('');
     setPhotos([]);
     setPreviews([]);
+    setPieceIdentiteRecto(null);
+    setPieceIdentiteVerso(null);
+    setJustificatifPropriete(null);
   }
 
   return (
@@ -69,17 +88,17 @@ function FormulaireLogement({ onPublier }) {
 
       <div className="form-group">
         <label>Prix mensuel (FCFA)</label>
-        <input type="number" value={prix} onChange={(e) => setPrix(e.target.value)} required />
+        <input type="number" value={prix} onChange={(e) => setPrix(e.target.value)} onWheel={bloquerScroll} required />
       </div>
 
       <div style={{ display: 'flex', gap: '12px' }}>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Chambres</label>
-          <input type="number" min="0" value={chambres} onChange={(e) => setChambres(e.target.value)} />
+          <input type="number" min="0" value={chambres} onChange={(e) => setChambres(e.target.value)} onWheel={bloquerScroll} />
         </div>
         <div className="form-group" style={{ flex: 1 }}>
           <label>Salons</label>
-          <input type="number" min="0" value={salons} onChange={(e) => setSalons(e.target.value)} />
+          <input type="number" min="0" value={salons} onChange={(e) => setSalons(e.target.value)} onWheel={bloquerScroll} />
         </div>
       </div>
 
@@ -89,7 +108,7 @@ function FormulaireLogement({ onPublier }) {
       </div>
 
       <div className="form-group">
-        <label>Photos (8 maximum)</label>
+        <label>Photos du logement (8 maximum)</label>
         <label className="photo-upload-zone">
           <ImagePlus size={20} />
           <span>Cliquez pour ajouter des photos</span>
@@ -108,6 +127,42 @@ function FormulaireLogement({ onPublier }) {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="verification-box">
+        <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.95rem', marginTop: 0 }}>
+          <IdCard size={18} /> Vérification d'identité (obligatoire)
+        </h3>
+        <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '-6px' }}>
+          Ces documents sont confidentiels et ne sont visibles que par notre équipe, jamais publiés publiquement. Ils servent uniquement à vérifier votre identité et votre droit de propriété.
+        </p>
+
+        <div className="form-group">
+          <label>Pièce d'identité — recto</label>
+          <label className="photo-upload-zone">
+            <IdCard size={18} />
+            <span>{pieceIdentiteRecto ? pieceIdentiteRecto.name : 'Cliquez pour ajouter une photo'}</span>
+            <input type="file" accept="image/*" onChange={(e) => setPieceIdentiteRecto(e.target.files[0])} hidden required />
+          </label>
+        </div>
+
+        <div className="form-group">
+          <label>Pièce d'identité — verso</label>
+          <label className="photo-upload-zone">
+            <IdCard size={18} />
+            <span>{pieceIdentiteVerso ? pieceIdentiteVerso.name : 'Cliquez pour ajouter une photo'}</span>
+            <input type="file" accept="image/*" onChange={(e) => setPieceIdentiteVerso(e.target.files[0])} hidden required />
+          </label>
+        </div>
+
+        <div className="form-group">
+          <label>Justificatif de propriété (titre foncier, contrat, facture...)</label>
+          <label className="photo-upload-zone">
+            <FileText size={18} />
+            <span>{justificatifPropriete ? justificatifPropriete.name : 'Cliquez pour ajouter un document'}</span>
+            <input type="file" accept="image/*,.pdf" onChange={(e) => setJustificatifPropriete(e.target.files[0])} hidden required />
+          </label>
+        </div>
       </div>
 
       <button type="submit" className="btn-primary">Soumettre l'annonce</button>

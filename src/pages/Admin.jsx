@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { ClipboardList, Home, MessageSquare, RotateCcw } from 'lucide-react';
+import { ClipboardList, Home, MessageSquare, RotateCcw, IdCard, FileText } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import { API_URL } from '../config';
+import { API_URL, API_BASE } from '../config';
 import AdminLogin from './AdminLogin';
 
 const onglets = [
@@ -27,7 +27,15 @@ function AdminDashboard({ token, deconnecter }) {
   const [chargement, setChargement] = useState(true);
 
   async function charger() {
-    const resLogements = await fetch(`${API_URL}/logements`);
+    const resLogements = await fetch(`${API_URL}/admin/logements`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!resLogements.ok) {
+      deconnecter();
+      return;
+    }
+
     setLogements(await resLogements.json());
 
     const resDemandes = await fetch(`${API_URL}/demandes`, {
@@ -127,13 +135,47 @@ function AdminDashboard({ token, deconnecter }) {
             <p>Aucune annonce en attente.</p>
           ) : (
             enAttente.map((l) => (
-              <div key={l.id} className="admin-row">
+              <div key={l.id} className="admin-annonce-block">
                 <div>
                   <h3>{l.titre}</h3>
                   <p>{l.secteur} — {l.type} — {l.prix.toLocaleString()} FCFA</p>
                   <p>{l.description}</p>
                   <p><strong>Tél. propriétaire :</strong> {l.telephoneProprietaire}</p>
                 </div>
+
+                <div className="verification-docs">
+                  <p style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '8px' }}>
+                    <IdCard size={15} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+                    Documents de vérification
+                  </p>
+                  <div className="verification-docs-grid">
+                    {l.pieceIdentiteRecto ? (
+                      <a href={`${API_BASE}${l.pieceIdentiteRecto}`} target="_blank" rel="noreferrer">
+                        <img src={`${API_BASE}${l.pieceIdentiteRecto}`} alt="Pièce d'identité recto" />
+                        <span>ID — Recto</span>
+                      </a>
+                    ) : (
+                      <div className="doc-manquant">ID Recto manquant</div>
+                    )}
+                    {l.pieceIdentiteVerso ? (
+                      <a href={`${API_BASE}${l.pieceIdentiteVerso}`} target="_blank" rel="noreferrer">
+                        <img src={`${API_BASE}${l.pieceIdentiteVerso}`} alt="Pièce d'identité verso" />
+                        <span>ID — Verso</span>
+                      </a>
+                    ) : (
+                      <div className="doc-manquant">ID Verso manquant</div>
+                    )}
+                    {l.justificatifPropriete ? (
+                      <a href={`${API_BASE}${l.justificatifPropriete}`} target="_blank" rel="noreferrer">
+                        <div className="doc-icon-preview"><FileText size={24} /></div>
+                        <span>Justificatif</span>
+                      </a>
+                    ) : (
+                      <div className="doc-manquant">Justificatif manquant</div>
+                    )}
+                  </div>
+                </div>
+
                 <div className="admin-actions">
                   <button className="btn-primary" onClick={() => validerLogement(l.id)}>Valider</button>
                   <button className="btn-secondary" onClick={() => refuserLogement(l.id)}>Refuser</button>

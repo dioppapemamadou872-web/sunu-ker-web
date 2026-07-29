@@ -1,15 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Moon, Sun, Menu } from 'lucide-react';
+import { Moon, Sun, Menu, User } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import logoIcon from '../assets/logo-icon.png';
 import { useProprietaire } from '../context/ProprietaireContext';
+import { API_BASE } from '../config';
+import logoIcon from '../assets/logo-icon.png';
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOuvert, setMenuOuvert] = useState(false);
   const { theme, basculerTheme } = useTheme();
-  const { estConnecte } = useProprietaire();
+  const { estConnecte, prenom, photoProfil } = useProprietaire();
 
   useEffect(() => {
     function onScroll() {
@@ -31,14 +32,33 @@ function Navbar() {
         <Link to="/publier" onClick={() => setMenuOuvert(false)}>Publier une annonce</Link>
         <Link to="/a-propos" onClick={() => setMenuOuvert(false)}>À propos</Link>
         <Link to="/contact" onClick={() => setMenuOuvert(false)}>Contact</Link>
+
         {estConnecte ? (
-          <Link to="/mon-espace" onClick={() => setMenuOuvert(false)}>Mon espace</Link>
+          <Link to="/mon-espace" onClick={() => setMenuOuvert(false)} className="navbar-user-link navbar-user-link-mobile">
+            <span className="navbar-avatar">
+              {photoProfil ? <img src={`${API_BASE}${photoProfil}`} alt={prenom} /> : <User size={14} />}
+            </span>
+            {prenom}
+          </Link>
         ) : (
           <Link to="/connexion" onClick={() => setMenuOuvert(false)}>Connexion</Link>
         )}
       </div>
 
       <div className="navbar-actions">
+        {estConnecte ? (
+          <Link to="/mon-espace" className="navbar-user-link navbar-user-link-desktop">
+            <span className="navbar-avatar">
+              {photoProfil ? <img src={`${API_BASE}${photoProfil}`} alt={prenom} /> : <User size={14} />}
+            </span>
+            {prenom}
+          </Link>
+        ) : (
+          <Link to="/connexion" className="navbar-user-link navbar-user-link-desktop">
+            Connexion
+          </Link>
+        )}
+
         <button className="theme-toggle" onClick={basculerTheme} aria-label="Changer de thème">
           {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
         </button>

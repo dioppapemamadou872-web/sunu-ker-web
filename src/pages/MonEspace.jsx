@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import { Trash2, User, Home, Heart, Lock } from 'lucide-react';
+import { Trash2, Settings, User, Pencil, X, Check } from 'lucide-react';
 import { useProprietaire } from '../context/ProprietaireContext';
 import { useLogements } from '../context/LogementsContext';
 import { useFavoris } from '../context/FavorisContext';
 import ChampMotDePasse from '../components/ChampMotDePasse';
 import ChampTelephone from '../components/ChampTelephone';
 import LogementCard from '../components/LogementCard';
+import { secteurs, typesLogement } from '../data/logements';
 import { API_URL, API_BASE } from '../config';
 
 const statutInfo = {
@@ -16,9 +17,9 @@ const statutInfo = {
 };
 
 const onglets = [
-  { id: 'annonces', label: 'Mes annonces', icon: Home },
+  { id: 'annonces', label: 'Mes annonces', icon: null },
   { id: 'compte', label: 'Mon compte', icon: User },
-  { id: 'favoris', label: 'Favoris', icon: Heart },
+  { id: 'favoris', label: 'Favoris', icon: null },
 ];
 
 function MonEspace() {
@@ -31,6 +32,10 @@ function MonEspace() {
   const [mesLogements, setMesLogements] = useState([]);
   const [chargement, setChargement] = useState(true);
   const [sessionExpiree, setSessionExpiree] = useState(false);
+
+  const [logementEnEdition, setLogementEnEdition] = useState(null);
+  const [formEdition, setFormEdition] = useState({});
+  const [erreurEdition, setErreurEdition] = useState('');
 
   const [profil, setProfil] = useState({ prenom: '', nom: '', telephone: '', email: '', photoProfil: null });
   const [messageProfil, setMessageProfil] = useState('');
@@ -89,6 +94,50 @@ function MonEspace() {
     });
 
     setMesLogements((precedents) => precedents.filter((l) => l.id !== id));
+  }
+
+  function ouvrirEdition(l) {
+    setLogementEnEdition(l.id);
+    setErreurEdition('');
+    setFormEdition({
+      titre: l.titre,
+      secteur: l.secteur,
+      type: l.type,
+      prix: l.prix,
+      chambres: l.chambres,
+      salons: l.salons,
+      description: l.description || '',
+    });
+  }
+
+  function annulerEdition() {
+    setLogementEnEdition(null);
+    setErreurEdition('');
+  }
+
+  async function enregistrerEdition(id) {
+    setErreurEdition('');
+
+    if (!formEdition.titre || !formEdition.secteur || !formEdition.prix || Number(formEdition.prix) <= 0) {
+      setErreurEdition('Merci de remplir correctement tous les champs obligatoires.');
+      return;
+    }
+
+    const res = await fetch(`${API_URL}/mes-logements/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(formEdition),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setErreurEdition(data.erreur || 'Erreur lors de la modification');
+      return;
+    }
+
+    setMesLogements((precedents) => precedents.map((l) => (l.id === id ? data : l)));
+    setLogementEnEdition(null);
   }
 
   async function handleModifierProfil(e) {
@@ -176,18 +225,17 @@ function MonEspace() {
       </div>
 
       <div className="mon-espace-tabs">
-        {onglets.map(({ id, label, icon: Icon }) => (
-          <button
-            key={id}
-            className={`mon-espace-tab ${ongletActif === id ? 'active' : ''}`}
-            onClick={() => setOngletActif(id)}
-          >
-            <Icon size={17} />
-            {label}
-            {id === 'annonces' && enAttente > 0 && <span className="tab-badge">{enAttente}</span>}
-            {id === 'favoris' && mesFavoris.length > 0 && <span className="tab-badge">{mesFavoris.length}</span>}
-          </button>
-        ))}
+        <button className={`mon-espace-tab ${ongletActif === 'annonces' ? 'active' : ''}`} onClick={() => setOngletActif('annonces')}>
+          Mes annonces
+          {enAttente > 0 && <span className="tab-badge">{enAttente}</span>}
+        </button>
+        <button className={`mon-espace-tab ${ongletActif === 'compte' ? 'active' : ''}`} onClick={() => setOngletActif('compte')}>
+          <User size={17} /> Mon compte
+        </button>
+        <button className={`mon-espace-tab ${ongletActif === 'favoris' ? 'active' : ''}`} onClick={() => setOngletActif('favoris')}>
+          Favoris
+          {mesFavoris.length > 0 && <span className="tab-badge">{mesFavoris.length}</span>}
+        </button>
       </div>
 
       {ongletActif === 'annonces' && (
@@ -200,34 +248,117 @@ function MonEspace() {
             <p>Vous n'avez pas encore publié d'annonce.</p>
           ) : (
             mesLogements.map((l) => (
-              <div key={l.id} className="admin-row">
-                <div>
-                  <h3 style={{ margin: '0 0 4px' }}>{l.titre}</h3>
-                  <p style={{ margin: '0 0 4px' }}>{l.secteur} — {l.prix.toLocaleString()} FCFA</p>
-                  <p style={{ margin: '0 0 4px', fontWeight: 600, color: statutInfo[l.statut]?.couleur }}>
-                    {statutInfo[l.statut]?.label}
-                  </p>
-                  {l.statut === 'refusee' && l.motifRefus && (
-                    <p style={{ margin: '0 0 4px', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                      Motif : {l.motifRefus}
-                    </p>
-                  )}
-                  {l.statut === 'validee' && (
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                      Disponibilité : <strong>{l.disponibilite === 'loue' ? 'Loué' : 'Disponible'}</strong>
-                      <span style={{ fontStyle: 'italic' }}> (géré par SunuKeur)</span>
-                    </p>
-                  )}
-                </div>
-                <div className="admin-actions">
-                  <button
-                    className="btn-secondary"
-                    onClick={() => supprimerLogement(l.id, l.titre)}
-                    aria-label="Supprimer l'annonce"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
+              <div key={l.id} className="admin-row" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+                {logementEnEdition === l.id ? (
+                  <div style={{ width: '100%' }}>
+                    <div className="form-group">
+                      <label>Titre</label>
+                      <input
+                        type="text"
+                        value={formEdition.titre}
+                        onChange={(e) => setFormEdition((f) => ({ ...f, titre: e.target.value }))}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <div className="form-group" style={{ flex: 1 }}>
+                        <label>Secteur</label>
+                        <select value={formEdition.secteur} onChange={(e) => setFormEdition((f) => ({ ...f, secteur: e.target.value }))}>
+                          {secteurs.map((s) => (<option key={s} value={s}>{s}</option>))}
+                        </select>
+                      </div>
+                      <div className="form-group" style={{ flex: 1 }}>
+                        <label>Type</label>
+                        <select value={formEdition.type} onChange={(e) => setFormEdition((f) => ({ ...f, type: e.target.value }))}>
+                          {typesLogement.map((t) => (<option key={t} value={t}>{t}</option>))}
+                        </select>
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Prix (FCFA)</label>
+                      <input
+                        type="number"
+                        value={formEdition.prix}
+                        onChange={(e) => setFormEdition((f) => ({ ...f, prix: e.target.value }))}
+                        onWheel={(e) => e.target.blur()}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px' }}>
+                      <div className="form-group" style={{ flex: 1 }}>
+                        <label>Chambres</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={formEdition.chambres}
+                          onChange={(e) => setFormEdition((f) => ({ ...f, chambres: e.target.value }))}
+                          onWheel={(e) => e.target.blur()}
+                        />
+                      </div>
+                      <div className="form-group" style={{ flex: 1 }}>
+                        <label>Salons</label>
+                        <input
+                          type="number"
+                          min="0"
+                          value={formEdition.salons}
+                          onChange={(e) => setFormEdition((f) => ({ ...f, salons: e.target.value }))}
+                          onWheel={(e) => e.target.blur()}
+                        />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        value={formEdition.description}
+                        onChange={(e) => setFormEdition((f) => ({ ...f, description: e.target.value }))}
+                      />
+                    </div>
+
+                    {l.statut === 'validee' && (
+                      <p style={{ fontSize: '0.82rem', color: 'var(--color-accent)' }}>
+                        ⚠ Cette annonce est actuellement validée. La modifier la repassera en attente de vérification.
+                      </p>
+                    )}
+
+                    {erreurEdition && <p style={{ fontSize: '0.85rem', color: 'var(--color-error)' }}>{erreurEdition}</p>}
+
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button className="btn-primary" onClick={() => enregistrerEdition(l.id)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <Check size={16} /> Enregistrer
+                      </button>
+                      <button className="btn-secondary" onClick={annulerEdition} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <X size={16} /> Annuler
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', width: '100%' }}>
+                    <div>
+                      <h3 style={{ margin: '0 0 4px' }}>{l.titre}</h3>
+                      <p style={{ margin: '0 0 4px' }}>{l.secteur} — {l.prix.toLocaleString()} FCFA</p>
+                      <p style={{ margin: '0 0 4px', fontWeight: 600, color: statutInfo[l.statut]?.couleur }}>
+                        {statutInfo[l.statut]?.label}
+                      </p>
+                      {l.statut === 'refusee' && l.motifRefus && (
+                        <p style={{ margin: '0 0 4px', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                          Motif : {l.motifRefus}
+                        </p>
+                      )}
+                      {l.statut === 'validee' && (
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                          Disponibilité : <strong>{l.disponibilite === 'loue' ? 'Loué' : 'Disponible'}</strong>
+                          <span style={{ fontStyle: 'italic' }}> (géré par SunuKeur)</span>
+                        </p>
+                      )}
+                    </div>
+                    <div className="admin-actions">
+                      <button className="btn-secondary" onClick={() => ouvrirEdition(l)} aria-label="Modifier l'annonce">
+                        <Pencil size={16} />
+                      </button>
+                      <button className="btn-secondary" onClick={() => supprimerLogement(l.id, l.titre)} aria-label="Supprimer l'annonce">
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))
           )}
@@ -302,7 +433,7 @@ function MonEspace() {
           </div>
 
           <div className="card">
-            <h2><Lock size={18} style={{ verticalAlign: 'middle', marginRight: '8px' }} />Sécurité</h2>
+            <h2><Settings size={18} style={{ verticalAlign: 'middle', marginRight: '8px' }} />Sécurité</h2>
 
             <h3 style={{ fontSize: '1rem' }}>Changer mon mot de passe</h3>
             <form onSubmit={handleChangerMotDePasse}>

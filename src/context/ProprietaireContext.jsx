@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { API_URL } from '../config';
 
 const ProprietaireContext = createContext();
@@ -7,6 +7,7 @@ export function ProprietaireProvider({ children }) {
   const [token, setToken] = useState(() => localStorage.getItem('sunuker_proprio_token'));
   const [prenom, setPrenom] = useState(() => localStorage.getItem('sunuker_proprio_prenom'));
   const [nom, setNom] = useState(() => localStorage.getItem('sunuker_proprio_nom'));
+  const [photoProfil, setPhotoProfil] = useState(null);
 
   function sauvegarderIdentite(data) {
     localStorage.setItem('sunuker_proprio_token', data.token);
@@ -48,6 +49,7 @@ export function ProprietaireProvider({ children }) {
     setToken(null);
     setPrenom(null);
     setNom(null);
+    setPhotoProfil(null);
   }
 
   async function recupererProfil() {
@@ -55,8 +57,20 @@ export function ProprietaireProvider({ children }) {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (!res.ok) throw new Error('Impossible de charger le profil');
-    return res.json();
+    const data = await res.json();
+    setPhotoProfil(data.photoProfil || null);
+    return data;
   }
+
+  useEffect(() => {
+    if (!token) return;
+    fetch(`${API_URL}/proprietaires/moi`, { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setPhotoProfil(data.photoProfil || null);
+      })
+      .catch(() => {});
+  }, [token]);
 
   async function modifierProfil(champs) {
     const res = await fetch(`${API_URL}/proprietaires/moi`, {
@@ -103,13 +117,14 @@ export function ProprietaireProvider({ children }) {
 
     const data = await res.json();
     if (!res.ok) throw new Error(data.erreur || 'Erreur lors de l\'envoi de la photo');
+    setPhotoProfil(data.photoProfil);
     return data.photoProfil;
   }
 
   return (
     <ProprietaireContext.Provider
       value={{
-        token, prenom, nom, estConnecte: !!token,
+        token, prenom, nom, photoProfil, estConnecte: !!token,
         inscrire, connecter, deconnecter,
         recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto,
       }}

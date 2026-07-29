@@ -5,7 +5,7 @@ function Footer() {
     <footer className="footer">
       <p>&copy; 2026 Sunu Kër — Dakar, Sénégal</p>
       <div className="footer-links">
-        <Link to="/a-propos#faq">FAQ</Link>
+        <Link to="/contact">FAQ</Link>
         <Link to="/a-propos">À propos</Link>
         <Link to="/contact">Contact</Link>
         <Link to="/mentions-legales">Mentions légales</Link>

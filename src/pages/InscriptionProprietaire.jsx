@@ -10,6 +10,8 @@ function InscriptionProprietaire() {
   const [prenom, setPrenom] = useState('');
   const [nom, setNom] = useState('');
   const [telephone, setTelephone] = useState('');
+  const [memeWhatsapp, setMemeWhatsapp] = useState(true);
+  const [whatsapp, setWhatsapp] = useState('');
   const [motDePasse, setMotDePasse] = useState('');
   const [erreur, setErreur] = useState('');
 
@@ -22,13 +24,18 @@ function InscriptionProprietaire() {
       return;
     }
 
+    if (!memeWhatsapp && whatsapp.length !== 9) {
+      setErreur('Le numéro WhatsApp doit contenir exactement 9 chiffres.');
+      return;
+    }
+
     if (motDePasse.length < 8) {
       setErreur('Le mot de passe doit contenir au moins 8 caractères.');
       return;
     }
 
     try {
-      await inscrire(prenom, nom, telephone, motDePasse);
+      await inscrire(prenom, nom, telephone, memeWhatsapp ? telephone : whatsapp, motDePasse);
       navigate('/mon-espace');
     } catch (err) {
       setErreur(err.message);
@@ -49,10 +56,24 @@ function InscriptionProprietaire() {
             <input type="text" value={nom} onChange={(e) => setNom(e.target.value)} required />
           </div>
         </div>
+
         <div className="form-group">
           <label>Numéro de téléphone (9 chiffres)</label>
           <ChampTelephone value={telephone} onChange={setTelephone} required />
         </div>
+
+        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.88rem', margin: '4px 0 14px', cursor: 'pointer' }}>
+          <input type="checkbox" checked={memeWhatsapp} onChange={(e) => setMemeWhatsapp(e.target.checked)} />
+          Mon numéro WhatsApp est le même
+        </label>
+
+        {!memeWhatsapp && (
+          <div className="form-group">
+            <label>Numéro WhatsApp (9 chiffres)</label>
+            <ChampTelephone value={whatsapp} onChange={setWhatsapp} required />
+          </div>
+        )}
+
         <div className="form-group">
           <label>Mot de passe (8 caractères minimum)</label>
           <ChampMotDePasse value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} required minLength={8} />

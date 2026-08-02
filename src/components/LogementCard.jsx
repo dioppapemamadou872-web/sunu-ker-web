@@ -1,14 +1,28 @@
 import { useNavigate } from 'react-router-dom';
-import { MapPin, BadgeCheck, Heart } from 'lucide-react';
+import { MapPin, BadgeCheck, Heart, Calendar } from 'lucide-react';
 import { API_BASE } from '../config';
 import { useFavoris } from '../context/FavorisContext';
 import { estNouveau } from '../utils';
+
+function formaterDateCourte(dateISO) {
+  if (!dateISO) return null;
+  const date = new Date(dateISO);
+  const maintenant = new Date();
+  const diffJours = Math.floor((maintenant - date) / (1000 * 60 * 60 * 24));
+
+  if (diffJours === 0) return "Aujourd'hui";
+  if (diffJours === 1) return 'Hier';
+  if (diffJours < 7) return `Il y a ${diffJours} jours`;
+
+  return date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' });
+}
 
 function LogementCard({ id, titre, prix, type, secteur, statut, photos, disponibilite, datePublication }) {
   const { estFavori, basculerFavori, estConnecte } = useFavoris();
   const navigate = useNavigate();
   const favori = estFavori(id);
   const nouveau = estNouveau(datePublication);
+  const texteDate = formaterDateCourte(datePublication);
 
   const image = photos && photos.length > 0
     ? `${API_BASE}${photos[0]}`
@@ -50,6 +64,11 @@ function LogementCard({ id, titre, prix, type, secteur, statut, photos, disponib
         <p className="logement-prix">{prix.toLocaleString()} FCFA <span>/ mois</span></p>
         <h3>{titre}</h3>
         <p className="logement-meta"><MapPin size={14} /> {secteur} · {type}</p>
+        {texteDate && (
+          <p className="logement-meta" style={{ marginTop: '4px' }}>
+            <Calendar size={13} /> {texteDate}
+          </p>
+        )}
       </div>
     </div>
   );

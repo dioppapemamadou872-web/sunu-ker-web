@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Phone, MessageCircle, Mail, Clock, Headset, Send, HelpCircle } from 'lucide-react';
 
 const questions = [
   {
@@ -35,32 +35,77 @@ function Contact() {
 
   return (
     <div>
-      <div className="card">
-        <h2>Contact</h2>
+      <div className="contact-grid">
+        <div className="card contact-infos">
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Headset size={20} style={{ color: 'var(--color-primary)' }} />Nous contacter</h2>
+          <p style={{ color: 'var(--color-text-muted)', fontSize: '0.9rem', marginTop: '-8px' }}>
+            Une question, un problème avec une annonce ou votre compte ? Notre équipe est là pour vous aider.
+          </p>
 
-        {envoye ? (
-          <p>Merci, votre message a bien été envoyé. Nous vous répondrons rapidement.</p>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Nom</label>
-              <input type="text" required />
+          <div className="contact-infos-list">
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><Phone size={18} /></div>
+              <div>
+                <span>Téléphone</span>
+                <strong>+221 77 535 02 29</strong>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Email</label>
-              <input type="email" required />
+
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><MessageCircle size={18} /></div>
+              <div>
+                <span>WhatsApp</span>
+                <strong>+221 77 535 02 29</strong>
+              </div>
             </div>
-            <div className="form-group">
-              <label>Message</label>
-              <textarea required />
+
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><Mail size={18} /></div>
+              <div>
+                <span>Email</span>
+                <strong>contact@sunukeur.com</strong>
+              </div>
             </div>
-            <button type="submit" className="btn-primary">Envoyer</button>
-          </form>
-        )}
+
+            <div className="contact-info-item">
+              <div className="contact-info-icon"><Clock size={18} /></div>
+              <div>
+                <span>Horaires</span>
+                <strong>24h/24, 7j/7</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card contact-form-card">
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><Send size={19} style={{ color: 'var(--color-primary)' }} />Envoyez-nous un message</h2>
+
+          {envoye ? (
+            <div className="alert-success">
+              <p>Votre message a bien été envoyé. Nous vous répondrons rapidement.</p>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="contact-form">
+              <div className="form-group">
+                <label>Nom</label>
+                <input type="text" required />
+              </div>
+              <div className="form-group">
+                <label>Email</label>
+                <input type="email" required />
+              </div>
+              <div className="form-group contact-form-message">
+                <label>Message</label>
+                <textarea required />
+              </div>
+              <button type="submit" className="btn-primary">Envoyer</button>
+            </form>
+          )}
+        </div>
       </div>
 
       <div className="card">
-        <h3 style={{ marginTop: 0 }}>Questions fréquentes</h3>
+        <h3 style={{ marginTop: 0, display: 'flex', alignItems: 'center', gap: '10px' }}><HelpCircle size={19} style={{ color: 'var(--color-primary)' }} />Questions fréquentes</h3>
         {questions.map((item, i) => (
           <div key={i} className="faq-item">
             <button className="faq-question" onClick={() => setOuverte(ouverte === i ? null : i)}>

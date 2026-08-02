@@ -18,11 +18,11 @@ export function ProprietaireProvider({ children }) {
     setNom(data.nom);
   }
 
-  async function inscrire(prenomSaisi, nomSaisi, telephone, motDePasse) {
+  async function inscrire(prenomSaisi, nomSaisi, telephone, whatsapp, motDePasse) {
     const res = await fetch(`${API_URL}/proprietaires/inscription`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prenom: prenomSaisi, nom: nomSaisi, telephone, motDePasse }),
+      body: JSON.stringify({ prenom: prenomSaisi, nom: nomSaisi, telephone, whatsapp, motDePasse }),
     });
 
     const data = await res.json();
@@ -105,6 +105,21 @@ export function ProprietaireProvider({ children }) {
     if (!res.ok) throw new Error(data.erreur || 'Erreur lors du changement de mot de passe');
   }
 
+  async function supprimerCompte(motDePasse) {
+    const res = await fetch(`${API_URL}/proprietaires/moi`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ motDePasse }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      throw new Error(data.erreur || 'Erreur lors de la suppression du compte');
+    }
+
+    deconnecter();
+  }
+
   async function uploaderPhoto(fichier) {
     const formData = new FormData();
     formData.append('photo', fichier);
@@ -126,7 +141,7 @@ export function ProprietaireProvider({ children }) {
       value={{
         token, prenom, nom, photoProfil, estConnecte: !!token,
         inscrire, connecter, deconnecter,
-        recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto,
+        recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto, supprimerCompte,
       }}
     >
       {children}

@@ -10,10 +10,11 @@ import Admin from './pages/Admin';
 import Contact from './pages/Contact';
 import APropos from './pages/APropos';
 import MentionsLegales from './pages/MentionsLegales';
+import PolitiqueConfidentialite from './pages/PolitiqueConfidentialite';
+import ConditionsUtilisation from './pages/ConditionsUtilisation';
 import InscriptionProprietaire from './pages/InscriptionProprietaire';
 import ConnexionProprietaire from './pages/ConnexionProprietaire';
 import MonEspace from './pages/MonEspace';
-
 
 function App() {
   return (
@@ -29,6 +30,8 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/a-propos" element={<APropos />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
+          <Route path="/conditions-utilisation" element={<ConditionsUtilisation />} />
           <Route path="/inscription" element={<InscriptionProprietaire />} />
           <Route path="/connexion" element={<ConnexionProprietaire />} />
           <Route path="/mon-espace" element={<MonEspace />} />

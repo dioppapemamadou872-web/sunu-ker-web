@@ -1,8 +1,16 @@
+import { useEffect } from 'react';
+import { useLogements } from '../context/LogementsContext';
 import SearchBar from '../components/SearchBar';
 import BentoSection from '../components/BentoSection';
 import QuartiersPopulaires from '../components/QuartiersPopulaires';
 
 function Accueil() {
+  const { rafraichir } = useLogements();
+
+  useEffect(() => {
+    rafraichir();
+  }, [rafraichir]);
+
   return (
     <div>
       <section className="hero">

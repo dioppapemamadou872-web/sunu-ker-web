@@ -23,9 +23,18 @@ function BentoSection() {
 
   useEffect(() => {
     async function charger() {
-      const res = await fetch(`${API_BASE}/api/stats/secteurs`);
-      setTopSecteurs(await res.json());
-      setChargement(false);
+      try {
+        const res = await fetch(`${API_BASE}/api/stats/secteurs`);
+        if (res.ok) {
+          const data = await res.json();
+          setTopSecteurs(Array.isArray(data) ? data : []);
+        }
+      } catch {
+        // En cas d'erreur réseau, on garde une liste vide silencieusement
+        setTopSecteurs([]);
+      } finally {
+        setChargement(false);
+      }
     }
     charger();
   }, []);

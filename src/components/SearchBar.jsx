@@ -54,6 +54,7 @@ function SearchBar() {
             placeholder="Budget max (FCFA)"
             value={budgetMax}
             onChange={(e) => setBudgetMax(e.target.value)}
+            onWheel={(e) => e.target.blur()}
           />
         </div>
       </div>

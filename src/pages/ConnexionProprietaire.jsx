@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { LogIn, ArrowRight, ShieldCheck } from 'lucide-react';
 import { useProprietaire } from '../context/ProprietaireContext';
 import ChampMotDePasse from '../components/ChampMotDePasse';
 import ChampTelephone from '../components/ChampTelephone';
@@ -23,23 +24,42 @@ function ConnexionProprietaire() {
   }
 
   return (
-    <div className="card" style={{ maxWidth: '440px' }}>
-      <h2>Connexion propriétaire</h2>
-      <form onSubmit={handleSubmit}>
+    <div className="auth-card-modern">
+      <div className="auth-header">
+        <div className="auth-icon-badge">
+          <LogIn size={22} />
+        </div>
+        <h2>Connexion Propriétaire</h2>
+        <p className="auth-subtitle">Accédez à votre espace bailleur SunuKeur.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="auth-form-body">
         <div className="form-group">
           <label>Numéro de téléphone</label>
           <ChampTelephone value={telephone} onChange={setTelephone} required />
         </div>
+
         <div className="form-group">
           <label>Mot de passe</label>
           <ChampMotDePasse value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} required />
         </div>
-        {erreur && <p style={{ color: 'var(--color-error)' }}>{erreur}</p>}
-        <button type="submit" className="btn-primary">Se connecter</button>
+
+        {erreur && <p className="alert-error-msg">{erreur}</p>}
+
+        <button type="submit" className="btn-primary auth-submit-btn">
+          <span>Se connecter</span>
+          <ArrowRight size={16} />
+        </button>
       </form>
-      <p style={{ marginTop: '16px', fontSize: '0.9rem' }}>
-        Pas encore de compte ? <Link to="/inscription" style={{ color: 'var(--color-primary)' }}>Inscrivez-vous</Link>
-      </p>
+
+      <div className="auth-footer">
+        <p>
+          Pas encore de compte ?{' '}
+          <Link to="/inscription" className="auth-link-bold">
+            Créer un compte
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

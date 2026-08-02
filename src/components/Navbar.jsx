@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Moon, Sun, Menu, User, Bell, LogOut, MessageSquare } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
@@ -21,21 +21,43 @@ function Navbar() {
 
   const [notifsOuvertes, setNotifsOuvertes] = useState(false);
   const [demandesNouvelles, setDemandesNouvelles] = useState([]);
+  const notifRef = useRef(null);
 
   useEffect(() => {
     if (!afficherControlesAdmin) return;
 
     async function chargerDemandes() {
-      const res = await fetch(`${API_URL}/demandes`, { headers: { Authorization: `Bearer ${tokenAdmin}` } });
-      if (!res.ok) return;
-      const data = await res.json();
-      setDemandesNouvelles(data.filter((d) => d.statut === 'nouvelle'));
+      try {
+        const res = await fetch(`${API_URL}/demandes`, { headers: { Authorization: `Bearer ${tokenAdmin}` } });
+        if (!res.ok) return;
+        const data = await res.json();
+        setDemandesNouvelles(data.filter((d) => d.statut === 'nouvelle'));
+      } catch {
+        // ignoré
+      }
     }
 
     chargerDemandes();
     const interval = setInterval(chargerDemandes, 30000);
     return () => clearInterval(interval);
   }, [afficherControlesAdmin, tokenAdmin]);
+
+  useEffect(() => {
+    if (!notifsOuvertes) return;
+
+    function handleClickOutside(e) {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifsOuvertes(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('touchstart', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [notifsOuvertes]);
 
   useEffect(() => {
     function onScroll() {
@@ -80,8 +102,13 @@ function Navbar() {
       <div className="navbar-actions">
         {afficherControlesAdmin ? (
           <>
-            <div style={{ position: 'relative' }}>
-              <button className="theme-toggle" onClick={() => setNotifsOuvertes((o) => !o)} aria-label="Notifications">
+            <div style={{ position: 'relative' }} ref={notifRef}>
+              <button
+                className="theme-toggle"
+                onClick={() => setNotifsOuvertes((o) => !o)}
+                aria-label="Notifications"
+                title="Notifications administration"
+              >
                 <Bell size={18} />
                 {demandesNouvelles.length > 0 && <span className="admin-notif-dot">{demandesNouvelles.length}</span>}
               </button>
@@ -89,8 +116,8 @@ function Navbar() {
               {notifsOuvertes && (
                 <div className="admin-notif-dropdown">
                   <div className="admin-notif-dropdown-header">
-                    <strong>Notifications</strong>
-                    <span>{demandesNouvelles.length} en attente</span>
+                    <strong>Notifications Admin</strong>
+                    <span>{demandesNouvelles.length} nouvelle{demandesNouvelles.length > 1 ? 's' : ''}</span>
                   </div>
                   {demandesNouvelles.length === 0 ? (
                     <p style={{ padding: '16px', fontSize: '0.85rem', color: 'var(--color-text-muted)', margin: 0 }}>

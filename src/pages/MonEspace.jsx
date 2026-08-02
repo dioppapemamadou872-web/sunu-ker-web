@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import {
   Settings, User, PlusCircle, Building2, Clock, CheckCircle2,
-  XCircle, Heart, Lock, LogOut, Camera, ShieldCheck, Eye, Phone, MapPin
+  XCircle, Heart, Lock, LogOut, Camera, ShieldCheck, Eye, Phone, MapPin, Check, X
 } from 'lucide-react';
 import { useProprietaire } from '../context/ProprietaireContext';
 import { useLogements } from '../context/LogementsContext';
@@ -38,8 +38,12 @@ function MonEspace() {
 
   const [ancienMdp, setAncienMdp] = useState('');
   const [nouveauMdp, setNouveauMdp] = useState('');
+  const [confirmNouveauMdp, setConfirmNouveauMdp] = useState('');
   const [messageMdp, setMessageMdp] = useState('');
   const [erreurMdp, setErreurMdp] = useState('');
+
+  const mdpEgaux = Boolean(nouveauMdp && confirmNouveauMdp && nouveauMdp === confirmNouveauMdp);
+  const mdpDifferents = Boolean(nouveauMdp && confirmNouveauMdp && nouveauMdp !== confirmNouveauMdp);
 
   async function charger() {
     try {
@@ -139,11 +143,17 @@ function MonEspace() {
       return;
     }
 
+    if (nouveauMdp !== confirmNouveauMdp) {
+      setErreurMdp('Le nouveau mot de passe et sa confirmation ne correspondent pas.');
+      return;
+    }
+
     try {
       await changerMotDePasse(ancienMdp, nouveauMdp);
       setMessageMdp('Mot de passe modifié avec succès.');
       setAncienMdp('');
       setNouveauMdp('');
+      setConfirmNouveauMdp('');
     } catch (err) {
       setErreurMdp(err.message);
     }
@@ -445,6 +455,21 @@ function MonEspace() {
               <div className="form-group">
                 <label>Nouveau mot de passe (8 caractères minimum)</label>
                 <ChampMotDePasse value={nouveauMdp} onChange={(e) => setNouveauMdp(e.target.value)} required minLength={8} />
+              </div>
+
+              <div className="form-group">
+                <label>Confirmer le nouveau mot de passe</label>
+                <ChampMotDePasse value={confirmNouveauMdp} onChange={(e) => setConfirmNouveauMdp(e.target.value)} required minLength={8} />
+                {mdpEgaux && (
+                  <span className="password-match-badge match">
+                    <Check size={13} /> Les mots de passe correspondent
+                  </span>
+                )}
+                {mdpDifferents && (
+                  <span className="password-match-badge mismatch">
+                    <X size={13} /> Les mots de passe ne correspondent pas
+                  </span>
+                )}
               </div>
 
               {erreurMdp && <p className="alert-error-msg">{erreurMdp}</p>}

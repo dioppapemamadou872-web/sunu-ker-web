@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
@@ -27,6 +27,8 @@ function App() {
           <Route path="/logements/:id" element={<LogementDetail />} />
           <Route path="/publier" element={<Publier />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/*" element={<Admin />} />
+          <Route path="/contact/admin" element={<Navigate to="/admin" replace />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/a-propos" element={<APropos />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
@@ -35,6 +37,7 @@ function App() {
           <Route path="/inscription" element={<InscriptionProprietaire />} />
           <Route path="/connexion" element={<ConnexionProprietaire />} />
           <Route path="/mon-espace" element={<MonEspace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>
       <Footer />

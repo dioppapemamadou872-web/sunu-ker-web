@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { SearchX, ArrowUpDown } from 'lucide-react';
+import { SearchX, ArrowUpDown, Building2, SlidersHorizontal, X } from 'lucide-react';
 import { useLogements } from '../context/LogementsContext';
 import SearchBar from '../components/SearchBar';
 import LogementCard from '../components/LogementCard';
@@ -51,35 +51,41 @@ function Logements() {
   }
 
   return (
-    <div>
-      <div className="filter-bar-compact">
-        <SearchBar />
+    <div className="logements-page-modern">
+      {/* SEARCH HEADER SECTION */}
+      <div className="logements-search-section">
+        <div className="logements-search-container">
+          <SearchBar />
+        </div>
       </div>
 
-      <div className="logements-toolbar">
+      {/* TOOLBAR (COUNT, ACTIVE CHIPS & SORT) */}
+      <div className="logements-toolbar-v2">
         <div className="logements-toolbar-left">
           {!chargement && (
-            <span className="results-count">
-              {resultats.length} logement{resultats.length !== 1 ? 's' : ''} trouvé{resultats.length !== 1 ? 's' : ''}
+            <span className="results-count-v2">
+              <Building2 size={16} style={{ color: 'var(--color-primary)' }} />
+              <strong>{resultats.length}</strong> logement{resultats.length !== 1 ? 's' : ''} disponible{resultats.length !== 1 ? 's' : ''}
             </span>
           )}
 
           {filtresActifs.length > 0 && (
-            <div className="filter-chips">
+            <div className="filter-chips-v2">
               {filtresActifs.map(({ cle, label }) => (
-                <button key={cle} className="filter-chip" onClick={() => retirerFiltre(cle)}>
-                  {label} ✕
+                <button key={cle} className="filter-chip-v2" onClick={() => retirerFiltre(cle)} title="Retirer ce filtre">
+                  <span>{label}</span>
+                  <X size={13} />
                 </button>
               ))}
-              <button className="filter-chip filter-chip-reset" onClick={reinitialiserFiltres}>
+              <button className="filter-chip-reset-v2" onClick={reinitialiserFiltres}>
                 Réinitialiser
               </button>
             </div>
           )}
         </div>
 
-        <div className="sort-select">
-          <ArrowUpDown size={15} />
+        <div className="sort-select-v2">
+          <ArrowUpDown size={15} style={{ color: 'var(--color-text-muted)' }} />
           <select value={tri} onChange={(e) => setTri(e.target.value)}>
             <option value="recent">Plus récents</option>
             <option value="prix_asc">Prix croissant</option>
@@ -88,6 +94,7 @@ function Logements() {
         </div>
       </div>
 
+      {/* LOGEMENT GRID / SKELETON / EMPTY STATE */}
       <div className="logement-grid">
         {chargement ? (
           Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton-card" />)
@@ -108,12 +115,14 @@ function Logements() {
             </Link>
           ))
         ) : (
-          <div className="empty-state">
-            <SearchX size={40} />
+          <div className="empty-state" style={{ padding: '60px 20px', gridColumn: '1 / -1' }}>
+            <SearchX size={44} style={{ color: 'var(--color-text-muted)' }} />
             <h3>Aucun logement ne correspond à votre recherche</h3>
             <p>Essayez d'élargir vos critères ou de réinitialiser les filtres.</p>
             {filtresActifs.length > 0 && (
-              <button className="btn-primary" onClick={reinitialiserFiltres}>Réinitialiser les filtres</button>
+              <button className="btn-primary" onClick={reinitialiserFiltres} style={{ marginTop: '12px' }}>
+                Réinitialiser les filtres
+              </button>
             )}
           </div>
         )}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, Home, Wallet } from 'lucide-react';
+import { Search, MapPin, Home, Wallet, ChevronDown } from 'lucide-react';
 import { secteurs, typesLogement } from '../data/logements';
 
 function SearchBar() {
@@ -22,36 +22,45 @@ function SearchBar() {
     <form className="search-bar" onSubmit={handleSubmit}>
       <div className="search-field">
         <MapPin size={18} className="search-icon" />
-        <select value={secteur} onChange={(e) => setSecteur(e.target.value)}>
-          <option value="">Quartier</option>
-          {secteurs.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+        <div className="search-input-wrapper">
+          <select value={secteur} onChange={(e) => setSecteur(e.target.value)}>
+            <option value="">Quartier</option>
+            {secteurs.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="select-chevron" />
+        </div>
       </div>
 
       <div className="search-field">
         <Home size={18} className="search-icon" />
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="">Type de logement</option>
-          {typesLogement.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
+        <div className="search-input-wrapper">
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="">Type de logement</option>
+            {typesLogement.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+          <ChevronDown size={14} className="select-chevron" />
+        </div>
       </div>
 
       <div className="search-field">
         <Wallet size={18} className="search-icon" />
-        <input
-          type="number"
-          placeholder="Budget max (FCFA)"
-          value={budgetMax}
-          onChange={(e) => setBudgetMax(e.target.value)}
-        />
+        <div className="search-input-wrapper">
+          <input
+            type="number"
+            placeholder="Budget max (FCFA)"
+            value={budgetMax}
+            onChange={(e) => setBudgetMax(e.target.value)}
+          />
+        </div>
       </div>
 
       <button type="submit" className="btn-search">
-        <Search size={18} /> Rechercher
+        <Search size={18} />
+        <span>Rechercher</span>
       </button>
     </form>
   );

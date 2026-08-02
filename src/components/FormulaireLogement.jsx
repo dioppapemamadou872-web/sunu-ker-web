@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ImagePlus, X, Check, ChevronRight, ChevronLeft, ClipboardList, FileEdit, Camera, ShieldCheck } from 'lucide-react';
+import { ImagePlus, X, Check, ChevronRight, ChevronLeft, ClipboardList, FileEdit, Camera, ShieldCheck, Send } from 'lucide-react';
 import { secteurs, typesLogement } from '../data/logements';
 
 const etapes = [
@@ -92,52 +92,59 @@ function FormulaireLogement({ onPublier }) {
 
   return (
     <div>
-      <div className="stepper">
+      {/* STEPPER BAR */}
+      <div className="stepper-v2">
         {etapes.map(({ id, label, icon: Icon }, index) => (
-          <div key={id} className="stepper-item">
-            <div className={`stepper-circle ${etapeActuelle === id ? 'active' : ''} ${etapeActuelle > id ? 'done' : ''}`}>
+          <div key={id} className="stepper-item-v2">
+            <div className={`stepper-circle-v2 ${etapeActuelle === id ? 'active' : ''} ${etapeActuelle > id ? 'done' : ''}`}>
               {etapeActuelle > id ? <Check size={16} /> : <Icon size={16} />}
             </div>
-            <span className={`stepper-label ${etapeActuelle === id ? 'active' : ''}`}>{label}</span>
-            {index < etapes.length - 1 && <div className={`stepper-line ${etapeActuelle > id ? 'done' : ''}`} />}
+            <span className={`stepper-label-v2 ${etapeActuelle === id ? 'active' : ''}`}>{label}</span>
+            {index < etapes.length - 1 && <div className={`stepper-line-v2 ${etapeActuelle > id ? 'done' : ''}`} />}
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="formulaire-logement-body">
         {etapeActuelle === 1 && (
           <div className="etape-contenu">
+            <h4 className="etape-title">
+              <ClipboardList size={18} style={{ color: 'var(--color-primary)' }} /> Informations principales
+            </h4>
+
             <div className="form-group">
               <label>Titre de l'annonce</label>
               <input type="text" value={titre} onChange={(e) => setTitre(e.target.value)} placeholder="Ex : Studio meublé proche mer" required />
             </div>
 
-            <div className="form-group">
-              <label>Secteur</label>
-              <select value={secteur} onChange={(e) => setSecteur(e.target.value)}>
-                {secteurs.map((s) => (<option key={s} value={s}>{s}</option>))}
-              </select>
-            </div>
+            <div className="form-row-2">
+              <div className="form-group">
+                <label>Secteur / Quartier</label>
+                <select value={secteur} onChange={(e) => setSecteur(e.target.value)}>
+                  {secteurs.map((s) => (<option key={s} value={s}>{s}</option>))}
+                </select>
+              </div>
 
-            <div className="form-group">
-              <label>Type de logement</label>
-              <select value={type} onChange={(e) => setType(e.target.value)}>
-                {typesLogement.map((t) => (<option key={t} value={t}>{t}</option>))}
-              </select>
+              <div className="form-group">
+                <label>Type de logement</label>
+                <select value={type} onChange={(e) => setType(e.target.value)}>
+                  {typesLogement.map((t) => (<option key={t} value={t}>{t}</option>))}
+                </select>
+              </div>
             </div>
 
             <div className="form-group">
               <label>Prix mensuel (FCFA)</label>
-              <input type="number" value={prix} onChange={(e) => setPrix(e.target.value)} onWheel={bloquerScroll} required />
+              <input type="number" value={prix} onChange={(e) => setPrix(e.target.value)} onWheel={bloquerScroll} placeholder="Ex : 150000" required />
             </div>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Chambres</label>
+            <div className="form-row-2">
+              <div className="form-group">
+                <label>Nombre de chambres</label>
                 <input type="number" min="0" value={chambres} onChange={(e) => setChambres(e.target.value)} onWheel={bloquerScroll} />
               </div>
-              <div className="form-group" style={{ flex: 1 }}>
-                <label>Salons</label>
+              <div className="form-group">
+                <label>Nombre de salons</label>
                 <input type="number" min="0" value={salons} onChange={(e) => setSalons(e.target.value)} onWheel={bloquerScroll} />
               </div>
             </div>
@@ -146,6 +153,10 @@ function FormulaireLogement({ onPublier }) {
 
         {etapeActuelle === 2 && (
           <div className="etape-contenu">
+            <h4 className="etape-title">
+              <FileEdit size={18} style={{ color: 'var(--color-primary)' }} /> Description détaillée
+            </h4>
+
             <div className="form-group">
               <label>Description du logement</label>
               <textarea
@@ -163,10 +174,14 @@ function FormulaireLogement({ onPublier }) {
 
         {etapeActuelle === 3 && (
           <div className="etape-contenu">
+            <h4 className="etape-title">
+              <Camera size={18} style={{ color: 'var(--color-primary)' }} /> Photos & Déclaration
+            </h4>
+
             <div className="form-group">
               <label>Photos du logement (8 maximum)</label>
               <label className="photo-upload-zone">
-                <ImagePlus size={20} />
+                <ImagePlus size={24} style={{ color: 'var(--color-primary)' }} />
                 <span>Cliquez pour ajouter des photos</span>
                 <input type="file" accept="image/*" multiple onChange={gererSelectionPhotos} hidden />
               </label>
@@ -210,15 +225,19 @@ function FormulaireLogement({ onPublier }) {
 
         {etapeActuelle === 4 && (
           <div className="etape-contenu">
+            <h4 className="etape-title">
+              <ShieldCheck size={18} style={{ color: 'var(--color-primary)' }} /> Récapitulatif de votre annonce
+            </h4>
+
             <div className="recap-box">
               <div className="recap-ligne"><span>Titre</span><strong>{titre || '—'}</strong></div>
               <div className="recap-ligne"><span>Secteur</span><strong>{secteur}</strong></div>
               <div className="recap-ligne"><span>Type</span><strong>{type}</strong></div>
-              <div className="recap-ligne"><span>Prix</span><strong>{prix ? `${Number(prix).toLocaleString()} FCFA` : '—'}</strong></div>
-              <div className="recap-ligne"><span>Chambres / Salons</span><strong>{chambres} / {salons}</strong></div>
-              <div className="recap-ligne"><span>Photos</span><strong>{photos.length} photo{photos.length > 1 ? 's' : ''}</strong></div>
+              <div className="recap-ligne"><span>Prix</span><strong>{prix ? `${Number(prix).toLocaleString()} FCFA / mois` : '—'}</strong></div>
+              <div className="recap-ligne"><span>Chambres / Salons</span><strong>{chambres} chambre(s) / {salons} salon(s)</strong></div>
+              <div className="recap-ligne"><span>Photos</span><strong>{photos.length} photo{photos.length > 1 ? 's' : ''} transférée(s)</strong></div>
               <div className="recap-ligne">
-                <span>Statut</span>
+                <span>Statut déclarant</span>
                 <strong>{statutsDeclarant.find((s) => s.value === statutDeclarant)?.label}</strong>
               </div>
               {description && (
@@ -229,17 +248,17 @@ function FormulaireLogement({ onPublier }) {
               )}
             </div>
 
-            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '12px' }}>
               Votre annonce sera visible publiquement uniquement après validation par notre équipe.
             </p>
           </div>
         )}
 
-        {erreurEtape && <p style={{ color: 'var(--color-error)', fontSize: '0.85rem' }}>{erreurEtape}</p>}
+        {erreurEtape && <p className="alert-error-msg">{erreurEtape}</p>}
 
         <div className="etape-navigation">
           {etapeActuelle > 1 && (
-            <button type="button" className="btn-secondary" onClick={allerEtapePrecedente} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button type="button" className="btn-secondary" onClick={allerEtapePrecedente} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <ChevronLeft size={16} /> Précédent
             </button>
           )}
@@ -247,11 +266,13 @@ function FormulaireLogement({ onPublier }) {
           <div style={{ flex: 1 }} />
 
           {etapeActuelle < 4 ? (
-            <button type="button" className="btn-primary" onClick={allerEtapeSuivante} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <button type="button" className="btn-primary" onClick={allerEtapeSuivante} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               Suivant <ChevronRight size={16} />
             </button>
           ) : (
-            <button type="submit" className="btn-primary">Soumettre l'annonce</button>
+            <button type="submit" className="btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <Send size={16} /> Soumettre l'annonce
+            </button>
           )}
         </div>
       </form>

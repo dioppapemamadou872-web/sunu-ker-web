@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
-import { Settings, User } from 'lucide-react';
+import {
+  Settings, User, PlusCircle, Building2, Clock, CheckCircle2,
+  XCircle, Heart, Lock, LogOut, Camera, ShieldCheck, Eye, Phone, MapPin
+} from 'lucide-react';
 import { useProprietaire } from '../context/ProprietaireContext';
 import { useLogements } from '../context/LogementsContext';
 import { useFavoris } from '../context/FavorisContext';
@@ -10,9 +13,9 @@ import LogementCard from '../components/LogementCard';
 import { API_URL, API_BASE } from '../config';
 
 const statutInfo = {
-  en_attente: { label: 'En attente de validation', couleur: 'var(--color-accent)' },
-  validee: { label: 'Validée — visible publiquement', couleur: 'var(--color-secondary)' },
-  refusee: { label: 'Refusée', couleur: 'var(--color-error)' },
+  en_attente: { label: 'En attente de validation', couleur: 'var(--color-accent)', icon: Clock, bg: 'color-mix(in srgb, var(--color-accent) 12%, transparent)' },
+  validee: { label: 'Validée (En ligne)', couleur: 'var(--color-secondary)', icon: CheckCircle2, bg: 'color-mix(in srgb, var(--color-secondary) 12%, transparent)' },
+  refusee: { label: 'Refusée', couleur: 'var(--color-error)', icon: XCircle, bg: 'color-mix(in srgb, var(--color-error) 12%, transparent)' },
 };
 
 function MonEspace() {
@@ -39,18 +42,23 @@ function MonEspace() {
   const [erreurMdp, setErreurMdp] = useState('');
 
   async function charger() {
-    const res = await fetch(`${API_URL}/mes-logements`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    try {
+      const res = await fetch(`${API_URL}/mes-logements`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-    if (!res.ok) {
-      deconnecter();
-      setSessionExpiree(true);
-      return;
+      if (!res.ok) {
+        deconnecter();
+        setSessionExpiree(true);
+        return;
+      }
+
+      setMesLogements(await res.json());
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setChargement(false);
     }
-
-    setMesLogements(await res.json());
-    setChargement(false);
   }
 
   async function chargerProfil() {
@@ -147,101 +155,214 @@ function MonEspace() {
 
   const mesFavoris = logements.filter((l) => favoris.includes(l.id));
   const enAttente = mesLogements.filter((l) => l.statut === 'en_attente').length;
+  const validees = mesLogements.filter((l) => l.statut === 'validee').length;
 
   return (
-    <div className="mon-espace">
-      <div className="mon-espace-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div className="avatar-preview" style={{ width: '52px', height: '52px' }}>
+    <div className="mon-espace-dashboard">
+      {/* HEADER BANNER */}
+      <div className="espace-hero-banner">
+        <div className="user-profile-header">
+          <div className="avatar-wrapper-lg">
             {profil.photoProfil ? (
-              <img src={`${API_BASE}${profil.photoProfil}`} alt="Photo de profil" />
+              <img src={`${API_BASE}${profil.photoProfil}`} alt={prenom} />
             ) : (
-              <User size={24} />
+              <User size={32} />
             )}
+            <label className="btn-upload-photo" title="Changer la photo">
+              <Camera size={14} />
+              <input type="file" accept="image/*" onChange={handleChangerPhoto} hidden disabled={envoiPhoto} />
+            </label>
           </div>
-          <div>
-            <h2 style={{ margin: 0 }}>Bonjour {prenom} 👋</h2>
-            <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Espace propriétaire</p>
+
+          <div className="user-profile-info">
+            <div className="user-name-row">
+              <h2>Bonjour {prenom} 👋</h2>
+              <span className="badge-bailleur-online">
+                <ShieldCheck size={14} /> Compte Bailleur Vérifié
+              </span>
+            </div>
+            <p className="user-subtitle-text">Gérez facilement vos annonces et votre profil propriétaire sur SunuKeur.</p>
           </div>
         </div>
-        <button className="btn-secondary" onClick={deconnecter}>Se déconnecter</button>
+
+        <div className="espace-hero-actions">
+          <Link to="/publier" className="btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <PlusCircle size={17} /> Publier une annonce
+          </Link>
+          <button className="btn-secondary" onClick={deconnecter} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+            <LogOut size={16} /> Déconnexion
+          </button>
+        </div>
       </div>
 
-      <div className="mon-espace-tabs">
-        <button className={`mon-espace-tab ${ongletActif === 'annonces' ? 'active' : ''}`} onClick={() => setOngletActif('annonces')}>
-          Mes annonces
-          {enAttente > 0 && <span className="tab-badge">{enAttente}</span>}
+      {/* QUICK METRICS */}
+      <div className="espace-metrics-grid">
+        <div className="metric-card">
+          <div className="metric-icon-box primary">
+            <Building2 size={22} />
+          </div>
+          <div>
+            <span className="metric-value">{mesLogements.length}</span>
+            <span className="metric-label">Logement(s) soumis</span>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon-box success">
+            <CheckCircle2 size={22} />
+          </div>
+          <div>
+            <span className="metric-value">{validees}</span>
+            <span className="metric-label">Annonce(s) en ligne</span>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon-box warning">
+            <Clock size={22} />
+          </div>
+          <div>
+            <span className="metric-value">{enAttente}</span>
+            <span className="metric-label">En cours de modération</span>
+          </div>
+        </div>
+      </div>
+
+      {/* TABS BAR */}
+      <div className="espace-nav-tabs">
+        <button
+          className={`tab-item ${ongletActif === 'annonces' ? 'active' : ''}`}
+          onClick={() => setOngletActif('annonces')}
+        >
+          <Building2 size={18} />
+          <span>Mes annonces</span>
+          {enAttente > 0 && <span className="tab-pill-warning">{enAttente}</span>}
         </button>
-        <button className={`mon-espace-tab ${ongletActif === 'compte' ? 'active' : ''}`} onClick={() => setOngletActif('compte')}>
-          <User size={17} /> Mon compte
+
+        <button
+          className={`tab-item ${ongletActif === 'compte' ? 'active' : ''}`}
+          onClick={() => setOngletActif('compte')}
+        >
+          <User size={18} />
+          <span>Mon profil & Sécurité</span>
         </button>
-        <button className={`mon-espace-tab ${ongletActif === 'favoris' ? 'active' : ''}`} onClick={() => setOngletActif('favoris')}>
-          Favoris
-          {mesFavoris.length > 0 && <span className="tab-badge">{mesFavoris.length}</span>}
+
+        <button
+          className={`tab-item ${ongletActif === 'favoris' ? 'active' : ''}`}
+          onClick={() => setOngletActif('favoris')}
+        >
+          <Heart size={18} />
+          <span>Mes favoris</span>
+          {mesFavoris.length > 0 && <span className="tab-pill-blue">{mesFavoris.length}</span>}
         </button>
       </div>
 
+      {/* ONGLET 1 : MES ANNONCES */}
       {ongletActif === 'annonces' && (
-        <div className="card">
-          <h2>Mes annonces</h2>
-          <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '-8px' }}>
-            La modification ou la suppression d'une annonce est gérée exclusivement par l'équipe SunuKeur.
-            Pour tout changement, contactez-nous via la page Contact.
-          </p>
+        <div className="card espace-tab-card">
+          <div className="tab-card-header">
+            <div>
+              <h3>Vos logements référencés sur SunuKeur</h3>
+              <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                Pour toute modification majeure ou retrait d'annonce validée, contactez l'équipe SunuKeur via la page Contact.
+              </p>
+            </div>
+            <Link to="/publier" className="btn-secondary" style={{ fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+              <PlusCircle size={15} style={{ verticalAlign: 'middle', marginRight: '4px' }} /> Nouvelle annonce
+            </Link>
+          </div>
 
           {chargement ? (
-            <p>Chargement...</p>
+            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>
+              Chargement de vos logements...
+            </div>
           ) : mesLogements.length === 0 ? (
-            <p>Vous n'avez pas encore publié d'annonce.</p>
+            <div className="empty-state" style={{ padding: '50px 20px' }}>
+              <Building2 size={42} style={{ color: 'var(--color-text-muted)' }} />
+              <h3>Vous n'avez pas encore publié d'annonce</h3>
+              <p>Proposez votre bien à des centaines de chercheurs de logements à Dakar dès maintenant.</p>
+              <Link to="/publier" className="btn-primary" style={{ marginTop: '12px', display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+                <PlusCircle size={16} /> Publier ma première annonce
+              </Link>
+            </div>
           ) : (
-            mesLogements.map((l) => (
-              <div key={l.id} className="admin-row">
-                <div>
-                  <h3 style={{ margin: '0 0 4px' }}>{l.titre}</h3>
-                  <p style={{ margin: '0 0 4px' }}>{l.secteur} — {l.prix.toLocaleString()} FCFA</p>
-                  <p style={{ margin: '0 0 4px', fontWeight: 600, color: statutInfo[l.statut]?.couleur }}>
-                    {statutInfo[l.statut]?.label}
-                  </p>
-                  {l.statut === 'refusee' && l.motifRefus && (
-                    <p style={{ margin: '0 0 4px', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                      Motif : {l.motifRefus}
-                    </p>
-                  )}
-                  {l.statut === 'validee' && (
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                      Disponibilité : <strong>{l.disponibilite === 'loue' ? 'Loué' : 'Disponible'}</strong>
-                      <span style={{ fontStyle: 'italic' }}> (géré par SunuKeur)</span>
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))
+            <div className="mes-annonces-grid">
+              {mesLogements.map((l) => {
+                const StatusIcon = statutInfo[l.statut]?.icon || Clock;
+                const photo = l.photos && l.photos.length > 0 ? `${API_BASE}${l.photos[0]}` : null;
+
+                return (
+                  <div key={l.id} className="mes-annonce-card">
+                    {photo ? (
+                      <div className="mes-annonce-thumb" style={{ backgroundImage: `url(${photo})` }} />
+                    ) : (
+                      <div className="mes-annonce-thumb-placeholder">
+                        <Building2 size={24} />
+                      </div>
+                    )}
+
+                    <div className="mes-annonce-body">
+                      <div className="mes-annonce-header-row">
+                        <h4>{l.titre}</h4>
+                        <span
+                          className="statut-pill"
+                          style={{
+                            color: statutInfo[l.statut]?.couleur,
+                            background: statutInfo[l.statut]?.bg,
+                          }}
+                        >
+                          <StatusIcon size={13} /> {statutInfo[l.statut]?.label}
+                        </span>
+                      </div>
+
+                      <div className="mes-annonce-meta-row">
+                        <span><MapPin size={13} /> {l.secteur}</span>
+                        <span className="dot-sep">•</span>
+                        <span>{l.type}</span>
+                        <span className="dot-sep">•</span>
+                        <strong className="mes-annonce-prix">{l.prix.toLocaleString()} FCFA / mois</strong>
+                      </div>
+
+                      {l.statut === 'refusee' && l.motifRefus && (
+                        <div className="motif-refus-banner">
+                          <strong>Motif de refus :</strong> {l.motifRefus}
+                        </div>
+                      )}
+
+                      {l.statut === 'validee' && (
+                        <div className="dispo-status-row">
+                          Statut de disponibilité : <strong>{l.disponibilite === 'loue' ? 'Loué' : 'Disponible'}</strong>
+                        </div>
+                      )}
+
+                      <div className="mes-annonce-footer">
+                        {l.statut === 'validee' && (
+                          <Link to={`/logements/${l.id}`} className="btn-secondary btn-sm" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                            <Eye size={14} /> Voir l'annonce publique
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       )}
 
+      {/* ONGLET 2 : MON COMPTE & SÉCURITÉ */}
       {ongletActif === 'compte' && (
-        <>
+        <div className="espace-profile-grid">
           <div className="card">
-            <h2><User size={18} style={{ verticalAlign: 'middle', marginRight: '8px' }} />Informations personnelles</h2>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '20px' }}>
-              <div className="avatar-preview">
-                {profil.photoProfil ? (
-                  <img src={`${API_BASE}${profil.photoProfil}`} alt="Photo de profil" />
-                ) : (
-                  <User size={28} />
-                )}
-              </div>
-              <label className="btn-secondary" style={{ cursor: 'pointer', display: 'inline-block' }}>
-                {envoiPhoto ? 'Envoi...' : 'Changer la photo'}
-                <input type="file" accept="image/*" onChange={handleChangerPhoto} hidden disabled={envoiPhoto} />
-              </label>
-            </div>
+            <h3><User size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-primary)' }} />Informations personnelles</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '-6px', marginBottom: '20px' }}>
+              Vos coordonnées sont utilisées pour la mise en relation avec les locataires intéressés.
+            </p>
 
             <form onSubmit={handleModifierProfil}>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <div className="form-group" style={{ flex: 1 }}>
+              <div className="form-row-2">
+                <div className="form-group">
                   <label>Prénom</label>
                   <input
                     type="text"
@@ -250,7 +371,7 @@ function MonEspace() {
                     required
                   />
                 </div>
-                <div className="form-group" style={{ flex: 1 }}>
+                <div className="form-group">
                   <label>Nom</label>
                   <input
                     type="text"
@@ -262,7 +383,7 @@ function MonEspace() {
               </div>
 
               <div className="form-group">
-                <label>Téléphone (9 chiffres)</label>
+                <label>Téléphone principal (9 chiffres)</label>
                 <ChampTelephone
                   value={profil.telephone}
                   onChange={(valeur) => setProfil((p) => ({ ...p, telephone: valeur }))}
@@ -270,17 +391,17 @@ function MonEspace() {
                 />
               </div>
 
-              <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', margin: '-8px 0 14px', cursor: 'pointer' }}>
+              <label className="checkbox-row">
                 <input
                   type="checkbox"
                   checked={profil.memeWhatsapp}
                   onChange={(e) => setProfil((p) => ({ ...p, memeWhatsapp: e.target.checked }))}
                 />
-                Mon numéro WhatsApp est le même
+                <span>Mon numéro WhatsApp est identique au numéro principal</span>
               </label>
 
               {!profil.memeWhatsapp && (
-                <div className="form-group">
+                <div className="form-group" style={{ marginTop: '12px' }}>
                   <label>Numéro WhatsApp (9 chiffres)</label>
                   <ChampTelephone
                     value={profil.whatsapp}
@@ -296,45 +417,70 @@ function MonEspace() {
                   type="email"
                   value={profil.email}
                   onChange={(e) => setProfil((p) => ({ ...p, email: e.target.value }))}
-                  placeholder="vous@exemple.com"
+                  placeholder="nom@exemple.com"
                 />
               </div>
 
-              {erreurProfil && <p style={{ fontSize: '0.85rem', color: 'var(--color-error)' }}>{erreurProfil}</p>}
-              {messageProfil && <p style={{ fontSize: '0.85rem', color: 'var(--color-secondary)' }}>{messageProfil}</p>}
+              {erreurProfil && <p className="alert-error-msg">{erreurProfil}</p>}
+              {messageProfil && <p className="alert-success-msg">{messageProfil}</p>}
 
-              <button type="submit" className="btn-primary">Enregistrer les modifications</button>
+              <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>
+                Enregistrer les modifications
+              </button>
             </form>
           </div>
 
           <div className="card">
-            <h2><Settings size={18} style={{ verticalAlign: 'middle', marginRight: '8px' }} />Sécurité</h2>
+            <h3><Lock size={18} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-primary)' }} />Sécurité & Mot de passe</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginTop: '-6px', marginBottom: '20px' }}>
+              Mettez à jour régulièrement votre mot de passe pour protéger l'accès à vos annonces.
+            </p>
 
-            <h3 style={{ fontSize: '1rem' }}>Changer mon mot de passe</h3>
             <form onSubmit={handleChangerMotDePasse}>
               <div className="form-group">
                 <label>Mot de passe actuel</label>
                 <ChampMotDePasse value={ancienMdp} onChange={(e) => setAncienMdp(e.target.value)} required />
               </div>
+
               <div className="form-group">
                 <label>Nouveau mot de passe (8 caractères minimum)</label>
                 <ChampMotDePasse value={nouveauMdp} onChange={(e) => setNouveauMdp(e.target.value)} required minLength={8} />
               </div>
-              {erreurMdp && <p style={{ fontSize: '0.85rem', color: 'var(--color-error)' }}>{erreurMdp}</p>}
-              {messageMdp && <p style={{ fontSize: '0.85rem', color: 'var(--color-secondary)' }}>{messageMdp}</p>}
-              <button type="submit" className="btn-primary">Changer le mot de passe</button>
+
+              {erreurMdp && <p className="alert-error-msg">{erreurMdp}</p>}
+              {messageMdp && <p className="alert-success-msg">{messageMdp}</p>}
+
+              <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>
+                Mettre à jour le mot de passe
+              </button>
             </form>
           </div>
-        </>
+        </div>
       )}
 
+      {/* ONGLET 3 : FAVORIS */}
       {ongletActif === 'favoris' && (
-        <div className="card">
-          <h2>Mes favoris</h2>
+        <div className="card espace-tab-card">
+          <div className="tab-card-header">
+            <div>
+              <h3>Vos logements favoris enregistrés</h3>
+              <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
+                Retrouvez facilement les annonces que vous avez sauvegardées lors de vos recherches.
+              </p>
+            </div>
+          </div>
+
           {mesFavoris.length === 0 ? (
-            <p style={{ color: 'var(--color-text-muted)' }}>Vous n'avez pas encore de favoris.</p>
+            <div className="empty-state" style={{ padding: '50px 20px' }}>
+              <Heart size={42} style={{ color: 'var(--color-text-muted)' }} />
+              <h3>Aucun favori enregistré</h3>
+              <p>Parcourez nos annonces et cliquez sur le cœur pour conserver vos biens préférés.</p>
+              <Link to="/logements" className="btn-primary" style={{ marginTop: '12px' }}>
+                Explorer les logements
+              </Link>
+            </div>
           ) : (
-            <div className="logement-grid" style={{ padding: 0 }}>
+            <div className="logement-grid" style={{ padding: 0, marginTop: '20px' }}>
               {mesFavoris.map((l) => (
                 <Link key={l.id} to={`/logements/${l.id}`} style={{ textDecoration: 'none' }}>
                   <LogementCard

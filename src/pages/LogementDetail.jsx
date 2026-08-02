@@ -23,7 +23,7 @@ function formaterDate(dateISO) {
 function LogementDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { logements, ajouterDemande, rafraichir } = useLogements();
+  const { logements, chargement, ajouterDemande, rafraichir } = useLogements();
   const { estFavori, basculerFavori, estConnecte } = useFavoris();
   const logement = logements.find((l) => l.id === Number(id));
 
@@ -63,8 +63,12 @@ function LogementDetail() {
     return () => window.removeEventListener('keydown', gererClavier);
   }, [lightboxOuverte, imageSuivante, imagePrecedente]);
 
+  if (chargement) {
+    return <div className="skeleton-card" style={{ maxWidth: '700px', height: '400px', margin: '20px auto' }} />;
+  }
+
   if (!logement) {
-    return <p style={{ textAlign: 'center', padding: '40px' }}>Logement introuvable.</p>;
+    return <p style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>Logement introuvable.</p>;
   }
 
   function handleSubmit(e) {

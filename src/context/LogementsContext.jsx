@@ -8,9 +8,17 @@ export function LogementsProvider({ children }) {
   const [chargement, setChargement] = useState(true);
 
   const rafraichir = useCallback(async () => {
-    const res = await fetch(`${API_URL}/logements`);
-    setLogements(await res.json());
-    setChargement(false);
+    try {
+      const res = await fetch(`${API_URL}/logements`);
+      if (res.ok) {
+        const data = await res.json();
+        setLogements(Array.isArray(data) ? data : []);
+      }
+    } catch (e) {
+      console.error('Erreur lors du chargement des logements :', e);
+    } finally {
+      setChargement(false);
+    }
   }, []);
 
   async function ajouterLogement(formData, token) {
@@ -19,16 +27,25 @@ export function LogementsProvider({ children }) {
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
-    const cree = await res.json();
-    setLogements((precedents) => [...precedents, cree]);
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.erreur || 'Erreur lors de l\'ajout du logement');
+    }
+    setLogements((precedents) => [...precedents, data]);
+    return data;
   }
 
   async function ajouterDemande(nouvelleDemande) {
-    await fetch(`${API_URL}/demandes`, {
+    const res = await fetch(`${API_URL}/demandes`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(nouvelleDemande),
     });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.erreur || 'Erreur lors de l\'envoi de la demande');
+    }
+    return data;
   }
 
   return (

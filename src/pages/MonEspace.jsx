@@ -199,7 +199,7 @@ function MonEspace() {
             <div className="user-name-row">
               <h2>Bonjour {prenom || 'Cher utilisateur'} 👋</h2>
               <span className="badge-bailleur-online">
-                <ShieldCheck size={14} /> {estBailleur ? 'Compte Bailleur & Locataire' : 'Compte Membre Vérifié'}
+                <ShieldCheck size={14} /> Compte Vérifié
               </span>
             </div>
             <p className="user-subtitle-text">
@@ -215,39 +215,6 @@ function MonEspace() {
           <button className="btn-secondary" onClick={deconnecter} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
             <LogOut size={16} /> Déconnexion
           </button>
-        </div>
-      </div>
-
-      {/* UNIVERSAL METRICS GRID */}
-      <div className="espace-metrics-grid">
-        <div className="metric-card" onClick={() => setOngletActif('favoris')} style={{ cursor: 'pointer' }}>
-          <div className="metric-icon-box primary">
-            <Heart size={22} />
-          </div>
-          <div>
-            <span className="metric-value">{mesFavoris.length}</span>
-            <span className="metric-label">Favori(s) enregistré(s)</span>
-          </div>
-        </div>
-
-        <div className="metric-card" onClick={() => setOngletActif('demandes')} style={{ cursor: 'pointer' }}>
-          <div className="metric-icon-box success">
-            <Send size={22} />
-          </div>
-          <div>
-            <span className="metric-value">{mesDemandes.length}</span>
-            <span className="metric-label">Demande(s) de mise en relation</span>
-          </div>
-        </div>
-
-        <div className="metric-card" onClick={() => setOngletActif('annonces')} style={{ cursor: 'pointer' }}>
-          <div className="metric-icon-box warning">
-            <Building2 size={22} />
-          </div>
-          <div>
-            <span className="metric-value">{mesLogements.length}</span>
-            <span className="metric-label">Annonce(s) publiée(s)</span>
-          </div>
         </div>
       </div>
 

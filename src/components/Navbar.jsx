@@ -163,6 +163,36 @@ function Navbar() {
                 Connexion
               </Link>
             )}
+            <Link 
+              to="/creer-alerte"
+              className="navbar-btn-alerte"
+              title="Créer une alerte logement"
+              style={{
+                backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                color: '#2563eb',
+                border: '1px solid rgba(37, 99, 235, 0.25)',
+                padding: '0.45rem 0.85rem',
+                borderRadius: '20px',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease-in-out'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = '#2563eb';
+                e.currentTarget.style.color = '#ffffff';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = 'rgba(37, 99, 235, 0.1)';
+                e.currentTarget.style.color = '#2563eb';
+              }}
+            >
+              <Bell size={15} />
+              <span className="navbar-alerte-btn-text">Créer une alerte</span>
+            </Link>
             <button className="theme-toggle" onClick={basculerTheme} aria-label="Changer de thème">
               {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
             </button>

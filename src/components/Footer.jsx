@@ -31,6 +31,7 @@ function Footer() {
             <ul>
               <li><Link to="/logements">Logements disponibles</Link></li>
               <li><Link to="/publier">Publier une annonce</Link></li>
+              <li><Link to="/creer-alerte">Créer une alerte logement</Link></li>
               <li><Link to="/a-propos">À propos de SunuKeur</Link></li>
               <li><Link to="/contact">Support & Contact</Link></li>
             </ul>

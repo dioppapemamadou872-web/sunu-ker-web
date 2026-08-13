@@ -15,6 +15,7 @@ import ConditionsUtilisation from './pages/ConditionsUtilisation';
 import InscriptionProprietaire from './pages/InscriptionProprietaire';
 import ConnexionProprietaire from './pages/ConnexionProprietaire';
 import MonEspace from './pages/MonEspace';
+import CreerAlerte from './pages/CreerAlerte';
 
 function App() {
   return (
@@ -26,6 +27,8 @@ function App() {
           <Route path="/logements" element={<Logements />} />
           <Route path="/logements/:id" element={<LogementDetail />} />
           <Route path="/publier" element={<Publier />} />
+          <Route path="/creer-alerte" element={<CreerAlerte />} />
+          <Route path="/alerte" element={<CreerAlerte />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/*" element={<Admin />} />
           <Route path="/contact/admin" element={<Navigate to="/admin" replace />} />

@@ -5,7 +5,7 @@ import {
   CheckCircle2, XCircle, Clock, Trash2, Mail, Phone, SquarePen,
   Check, X, Search, MessageCircle, RotateCcw, ShieldCheck, AlertCircle,
   Filter, Eye, ChevronRight, SlidersHorizontal, ArrowUpRight, Sparkles,
-  TrendingUp, Home, ChevronDown, CheckSquare, Layers, Activity
+  TrendingUp, Home, ChevronDown, CheckSquare, Layers, Activity, Bell
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL, API_BASE } from '../config';
@@ -31,6 +31,7 @@ const navigationGroups = [
     title: "UTILISATEURS & LEADS",
     items: [
       { id: 'demandes', label: 'Demandes de contact', icon: MessageSquare, badgeKey: 'demandes', badgeVariant: 'primary' },
+      { id: 'alertes', label: 'Alertes Recherche', icon: Bell, badgeKey: 'alertes', badgeVariant: 'warning' },
       { id: 'proprietaires', label: 'Comptes Bailleurs', icon: Users },
     ]
   }
@@ -63,6 +64,7 @@ function AdminSaaSConsole({ token, deconnecter }) {
 
   const [logements, setLogements] = useState([]);
   const [demandes, setDemandes] = useState([]);
+  const [alertes, setAlertes] = useState([]);
   const [stats, setStats] = useState(null);
   const [proprietaires, setProprietaires] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -111,6 +113,11 @@ function AdminSaaSConsole({ token, deconnecter }) {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (resDemandes.ok) setDemandes(await resDemandes.json());
+
+      const resAlertes = await fetch(`${API_BASE}/api/alertes`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (resAlertes.ok) setAlertes(await resAlertes.json());
 
       const resStats = await fetch(`${API_URL}/admin/stats`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -173,6 +180,24 @@ function AdminSaaSConsole({ token, deconnecter }) {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ statut: 'traitee' }),
+    });
+    loadData(true);
+  }
+
+  async function changerStatutAlerte(id, nouveauStatut) {
+    await fetch(`${API_BASE}/api/alertes/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ statut: nouveauStatut }),
+    });
+    loadData(true);
+  }
+
+  async function supprimerAlerte(id) {
+    if (!window.confirm('Voulez-vous supprimer cette alerte ?')) return;
+    await fetch(`${API_BASE}/api/alertes/${id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
     });
     loadData(true);
   }
@@ -249,11 +274,12 @@ function AdminSaaSConsole({ token, deconnecter }) {
 
   const pendingLogements = logements.filter((l) => l.statut === 'en_attente');
   const newDemandes = demandes.filter((d) => d.statut === 'nouvelle');
-  const demandesNouvelles = newDemandes;
+  const activeAlertes = alertes.filter((a) => a.statut === 'active');
 
   const badgeCounts = {
     attente: pendingLogements.length,
     demandes: newDemandes.length,
+    alertes: activeAlertes.length,
   };
 
   const filteredLogements = logements.filter((l) => {
@@ -785,7 +811,94 @@ function AdminSaaSConsole({ token, deconnecter }) {
               </div>
             )}
 
-            {/* VIEW 6: PROPRIÉTAIRES */}
+            {/* VIEW 6: ALERTES RECHERCHE */}
+            {activeSection === 'alertes' && (
+              <div className="saas-view-fade">
+                <div className="saas-page-header">
+                  <div>
+                    <h1>Alertes Recherche ({alertes.length})</h1>
+                    <p>Liste des demandes d'alertes enregistrées par les locataires à la recherche d'un bien.</p>
+                  </div>
+                </div>
+
+                <div className="saas-table-container">
+                  <table className="saas-table">
+                    <thead>
+                      <tr>
+                        <th>Locataire</th>
+                        <th>Téléphone / WhatsApp</th>
+                        <th>Critères (Secteur & Type)</th>
+                        <th>Budget Max</th>
+                        <th>Statut</th>
+                        <th style={{ textAlign: 'right' }}>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alertes.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} style={{ textAlign: 'center', padding: '36px', color: 'var(--color-text-muted)' }}>
+                            Aucune alerte de recherche enregistrée.
+                          </td>
+                        </tr>
+                      ) : (
+                        alertes.map((a) => (
+                          <tr key={a.id}>
+                            <td>
+                              <strong className="td-title">{a.prenom} {a.nom}</strong>
+                              {a.email && <span className="td-sub">{a.email}</span>}
+                            </td>
+                            <td>
+                              <a href={`tel:${a.telephone}`} className="td-phone-link"><Phone size={13} /> {a.telephone}</a>
+                            </td>
+                            <td>
+                              <strong className="td-text">{a.secteur || 'Tous'} • {a.typeLogement || 'Tous'}</strong>
+                              <span className="td-sub">Créée le {new Date(a.dateCreation || a.id).toLocaleDateString('fr-FR')}</span>
+                            </td>
+                            <td>
+                              <strong style={{ color: '#2563eb' }}>
+                                {a.budgetMax ? `${Number(a.budgetMax).toLocaleString()} FCFA` : 'Non spécifié'}
+                              </strong>
+                            </td>
+                            <td>
+                              <span className={`saas-status-pill ${a.statut === 'active' ? 'status-pill-warning' : 'status-pill-success'}`}>
+                                {a.statut === 'active' ? 'Active' : 'Traitée'}
+                              </span>
+                            </td>
+                            <td>
+                              <div className="td-actions">
+                                <a 
+                                  href={`https://wa.me/221${a.whatsapp || a.telephone}?text=${encodeURIComponent(`Bonjour ${a.prenom || a.nom}, nous avons de nouveaux logements correspondant à votre alerte sur Sunu Ker (${a.secteur} - ${a.typeLogement}) !`)}`} 
+                                  target="_blank" 
+                                  rel="noreferrer" 
+                                  className="icon-btn-square whatsapp" 
+                                  title="Contacter sur WhatsApp"
+                                >
+                                  <MessageCircle size={15} />
+                                </a>
+                                {a.statut === 'active' ? (
+                                  <button className="icon-btn-square success" onClick={() => changerStatutAlerte(a.id, 'traitee')} title="Marquer comme traitée">
+                                    <Check size={15} />
+                                  </button>
+                                ) : (
+                                  <button className="icon-btn-square warning" onClick={() => changerStatutAlerte(a.id, 'active')} title="Réactiver l'alerte">
+                                    <RotateCcw size={15} />
+                                  </button>
+                                )}
+                                <button className="icon-btn-square danger" onClick={() => supprimerAlerte(a.id)} title="Supprimer">
+                                  <Trash2 size={15} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* VIEW 7: PROPRIÉTAIRES */}
             {activeSection === 'proprietaires' && (
               <div className="saas-view-fade">
                 <div className="saas-page-header">

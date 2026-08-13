@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { SearchX, ArrowUpDown, Building2, SlidersHorizontal, X } from 'lucide-react';
+import { SearchX, ArrowUpDown, Building2, SlidersHorizontal, X, Bell, Sparkles } from 'lucide-react';
 import { useLogements } from '../context/LogementsContext';
 import SearchBar from '../components/SearchBar';
 import LogementCard from '../components/LogementCard';
@@ -118,15 +118,71 @@ function Logements() {
           <div className="empty-state" style={{ padding: '60px 20px', gridColumn: '1 / -1' }}>
             <SearchX size={44} style={{ color: 'var(--color-text-muted)' }} />
             <h3>Aucun logement ne correspond à votre recherche</h3>
-            <p>Essayez d'élargir vos critères ou de réinitialiser les filtres.</p>
-            {filtresActifs.length > 0 && (
-              <button className="btn-primary" onClick={reinitialiserFiltres} style={{ marginTop: '12px' }}>
-                Réinitialiser les filtres
-              </button>
-            )}
+            <p style={{ maxWidth: '480px', margin: '0 auto 1rem auto' }}>
+              Ne manquez aucune opportunité ! Créez une alerte gratuite pour être prévenu immédiatement sur WhatsApp dès qu'un bien similaire est publié.
+            </p>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <Link 
+                to="/creer-alerte"
+                className="btn-primary" 
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none' }}
+              >
+                <Bell size={18} /> Créez une alerte personnalisée
+              </Link>
+              {filtresActifs.length > 0 && (
+                <button className="btn-secondary" onClick={reinitialiserFiltres}>
+                  Réinitialiser les filtres
+                </button>
+              )}
+            </div>
           </div>
         )}
       </div>
+
+      {/* BANNIÈRE CRÉER UNE ALERTE SI DES RÉSULTATS EXISTENT */}
+      {resultats.length > 0 && (
+        <div style={{
+          marginTop: '3rem',
+          backgroundColor: '#eff6ff',
+          borderRadius: '16px',
+          border: '1px solid #bfdbfe',
+          padding: '2rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '1.5rem'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+            <div style={{
+              backgroundColor: '#2563eb',
+              color: '#ffffff',
+              padding: '1rem',
+              borderRadius: '14px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <Bell size={28} />
+            </div>
+            <div>
+              <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.15rem', color: '#1e3a8a', fontWeight: 700 }}>
+                Vous ne trouvez pas le logement idéal ?
+              </h4>
+              <p style={{ margin: 0, color: '#3b82f6', fontSize: '0.925rem' }}>
+                Activez une alerte recherche et recevez une notification WhatsApp en priorité dès la mise en ligne d'un bien !
+              </p>
+            </div>
+          </div>
+          <Link 
+            to="/creer-alerte"
+            className="btn-primary"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', whitespace: 'nowrap', textDecoration: 'none' }}
+          >
+            <Sparkles size={18} /> Activer mon alerte
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

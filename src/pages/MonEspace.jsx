@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Link } from 'react-router-dom';
 import {
-  Settings, User, PlusCircle, Building2, Clock, CheckCircle2,
-  XCircle, Heart, Lock, LogOut, Camera, ShieldCheck, Eye, Phone, MapPin, Check, X, Send, Sparkles, MessageSquare
+  User, PlusCircle, Building2, Clock, CheckCircle2,
+  XCircle, Heart, Lock, LogOut, Camera, ShieldCheck, Eye, MapPin, Check, X, Send, MessageSquare, Trash2
 } from 'lucide-react';
 import { useProprietaire } from '../context/ProprietaireContext';
 import { useLogements } from '../context/LogementsContext';
@@ -10,6 +10,7 @@ import { useFavoris } from '../context/FavorisContext';
 import ChampMotDePasse from '../components/ChampMotDePasse';
 import ChampTelephone from '../components/ChampTelephone';
 import LogementCard from '../components/LogementCard';
+import ModalConfirmation from '../components/ModalConfirmation';
 import { API_URL, API_BASE } from '../config';
 
 const statutInfo = {
@@ -19,7 +20,7 @@ const statutInfo = {
 };
 
 function MonEspace() {
-  const { token, prenom, nom, estConnecte, deconnecter, recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto } = useProprietaire();
+  const { token, prenom, estConnecte, deconnecter, recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto, supprimerPhoto } = useProprietaire();
   const { logements, rafraichir: rafraichirLogements } = useLogements();
   const { favoris } = useFavoris();
 
@@ -36,6 +37,7 @@ function MonEspace() {
   const [messageProfil, setMessageProfil] = useState('');
   const [erreurProfil, setErreurProfil] = useState('');
   const [envoiPhoto, setEnvoiPhoto] = useState(false);
+  const [modalSuppressionPhotoOuvert, setModalSuppressionPhotoOuvert] = useState(false);
 
   const [ancienMdp, setAncienMdp] = useState('');
   const [nouveauMdp, setNouveauMdp] = useState('');
@@ -97,6 +99,7 @@ function MonEspace() {
     charger();
     chargerProfil();
     rafraichirLogements();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   async function handleModifierProfil(e) {
@@ -133,9 +136,32 @@ function MonEspace() {
     if (!fichier) return;
 
     setEnvoiPhoto(true);
+    setMessageProfil('');
+    setErreurProfil('');
     try {
       const nouvellePhoto = await uploaderPhoto(fichier);
       setProfil((precedent) => ({ ...precedent, photoProfil: nouvellePhoto }));
+      setMessageProfil('Photo de profil mise à jour avec succès.');
+    } catch (err) {
+      setErreurProfil(err.message);
+    } finally {
+      setEnvoiPhoto(false);
+    }
+  }
+
+  function handleSupprimerPhoto() {
+    setModalSuppressionPhotoOuvert(true);
+  }
+
+  async function confirmerSuppressionPhoto() {
+    setEnvoiPhoto(true);
+    setMessageProfil('');
+    setErreurProfil('');
+    try {
+      await supprimerPhoto();
+      setProfil((precedent) => ({ ...precedent, photoProfil: null }));
+      setMessageProfil('Photo de profil supprimée avec succès.');
+      setModalSuppressionPhotoOuvert(false);
     } catch (err) {
       setErreurProfil(err.message);
     } finally {
@@ -175,8 +201,6 @@ function MonEspace() {
 
   const mesFavoris = logements.filter((l) => favoris.includes(l.id));
   const enAttente = mesLogements.filter((l) => l.statut === 'en_attente').length;
-  const validees = mesLogements.filter((l) => l.statut === 'validee').length;
-  const estBailleur = mesLogements.length > 0;
 
   return (
     <div className="mon-espace-dashboard">
@@ -189,10 +213,23 @@ function MonEspace() {
             ) : (
               <User size={32} />
             )}
-            <label className="btn-upload-photo" title="Changer la photo de profil">
-              <Camera size={14} />
-              <input type="file" accept="image/*" onChange={handleChangerPhoto} hidden disabled={envoiPhoto} />
-            </label>
+            <div className="avatar-actions">
+              <label className="btn-upload-photo" title="Changer la photo de profil">
+                <Camera size={13} />
+                <input type="file" accept="image/*" onChange={handleChangerPhoto} hidden disabled={envoiPhoto} />
+              </label>
+              {profil.photoProfil && (
+                <button
+                  type="button"
+                  className="btn-delete-photo"
+                  onClick={handleSupprimerPhoto}
+                  title="Supprimer la photo de profil"
+                  disabled={envoiPhoto}
+                >
+                  <Trash2 size={13} />
+                </button>
+              )}
+            </div>
           </div>
 
           <div className="user-profile-info">
@@ -203,7 +240,7 @@ function MonEspace() {
               </span>
             </div>
             <p className="user-subtitle-text">
-              Gérez vos favoris, vos demandes de logement, vos annonces et vos paramètres personnels sur SunuKeur.
+              Gérez vos favoris, vos demandes de logement, vos annonces et vos paramètres personnels sur DëkuWaay.
             </p>
           </div>
         </div>
@@ -309,7 +346,7 @@ function MonEspace() {
             <div>
               <h3>Historique de vos demandes de mise en relation</h3>
               <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>
-                Suivez les logements pour lesquels vous avez exprimé un intérêt. L'équipe SunuKeur s'occupe du suivi avec les propriétaires.
+                Suivez les logements pour lesquels vous avez exprimé un intérêt. L'équipe DëkuWaay s'occupe du suivi avec les propriétaires.
               </p>
             </div>
           </div>
@@ -333,6 +370,7 @@ function MonEspace() {
                     <th>Téléphone</th>
                     <th>Date de demande</th>
                     <th>Statut</th>
+                    <th>Contact direct</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -348,6 +386,28 @@ function MonEspace() {
                         <span className="saas-badge success">
                           <CheckCircle2 size={13} /> Transmise au bailleur
                         </span>
+                      </td>
+                      <td>
+                        <a
+                          href={`https://wa.me/221${d.telephone.replace(/\D/g, '')}?text=${encodeURIComponent(`Bonjour ${d.nom}, suite à votre intérêt sur DëkuWaay concernant "${d.logementTitre || 'le logement'}"`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-sm"
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            textDecoration: 'none',
+                            background: '#25D366',
+                            color: '#ffffff',
+                            borderRadius: '8px',
+                            padding: '4px 10px',
+                            fontSize: '0.78rem',
+                            fontWeight: 700
+                          }}
+                        >
+                          <MessageSquare size={13} /> WhatsApp
+                        </a>
                       </td>
                     </tr>
                   ))}
@@ -461,6 +521,36 @@ function MonEspace() {
               Vos coordonnées sont utilisées pour pré-remplir vos demandes de contact et échanger avec les bailleurs.
             </p>
 
+            <div className="profile-photo-card" style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', padding: '1rem', background: 'color-mix(in srgb, var(--color-primary) 5%, transparent)', borderRadius: '14px', border: '1px solid color-mix(in srgb, var(--color-primary) 15%, transparent)' }}>
+              <div style={{ width: '56px', height: '56px', borderRadius: '50%', overflow: 'hidden', background: 'var(--color-surface)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, border: '2px solid var(--color-primary)' }}>
+                {profil.photoProfil ? (
+                  <img src={`${API_BASE}${profil.photoProfil}`} alt={prenom} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <User size={26} style={{ color: 'var(--color-text-muted)' }} />
+                )}
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Photo de profil</span>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <label className="btn-secondary btn-sm" style={{ cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <Camera size={14} /> {profil.photoProfil ? 'Changer la photo' : 'Ajouter une photo'}
+                    <input type="file" accept="image/*" onChange={handleChangerPhoto} hidden disabled={envoiPhoto} />
+                  </label>
+                  {profil.photoProfil && (
+                    <button
+                      type="button"
+                      className="btn-danger-light btn-sm"
+                      onClick={handleSupprimerPhoto}
+                      disabled={envoiPhoto}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}
+                    >
+                      <Trash2 size={14} /> Supprimer la photo
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
             <form onSubmit={handleModifierProfil}>
               <div className="form-row-2">
                 <div className="form-group">
@@ -573,6 +663,19 @@ function MonEspace() {
           </div>
         </div>
       )}
+
+      {/* MODAL SUPPRESSION PHOTO DE PROFIL */}
+      <ModalConfirmation
+        isOpen={modalSuppressionPhotoOuvert}
+        onClose={() => setModalSuppressionPhotoOuvert(false)}
+        onConfirm={confirmerSuppressionPhoto}
+        titre="Supprimer la photo de profil ?"
+        message="Êtes-vous sûr de vouloir supprimer votre photo de profil ? Votre avatar sera réinitialisé."
+        texteConfirmer="Oui, supprimer"
+        texteAnnuler="Annuler"
+        variante="danger"
+        chargement={envoiPhoto}
+      />
     </div>
   );
 }

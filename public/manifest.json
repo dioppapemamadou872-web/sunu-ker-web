@@ -1,0 +1,18 @@
+{
+  "short_name": "DëkuWaay",
+  "name": "DëkuWaay — Logements Vérifiés à Dakar",
+  "description": "La plateforme immobilière de référence pour la recherche et la publication de logements vérifiés à Dakar, Sénégal.",
+  "icons": [
+    {
+      "src": "/logo-icon.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0F172A",
+  "theme_color": "#2563EB",
+  "display": "standalone",
+  "orientation": "portrait"
+}

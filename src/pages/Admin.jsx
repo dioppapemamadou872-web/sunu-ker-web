@@ -3,14 +3,14 @@ import { useSearchParams } from 'react-router-dom';
 import {
   LayoutDashboard, ClipboardCheck, Building2, Users, MessageSquare,
   CheckCircle2, XCircle, Clock, Trash2, Mail, Phone, SquarePen,
-  Check, X, Search, MessageCircle, RotateCcw, ShieldCheck, AlertCircle,
-  Filter, Eye, ChevronRight, SlidersHorizontal, ArrowUpRight, Sparkles,
-  TrendingUp, Home, ChevronDown, CheckSquare, Layers, Activity, Bell
+  Check, X, Search, MessageCircle, RotateCcw, ShieldCheck,
+  ChevronRight, TrendingUp, Layers, Bell
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { API_URL, API_BASE } from '../config';
 import { secteurs, typesLogement } from '../data/logements';
 import AdminLogin from './AdminLogin';
+import AnimatedCounter from '../components/AnimatedCounter';
 
 const navigationGroups = [
   {
@@ -71,6 +71,7 @@ function AdminSaaSConsole({ token, deconnecter }) {
 
   // Search & Filters
   const [searchQuery, setSearchQuery] = useState('');
+  const [demandesSearchQuery, setDemandesSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('tous');
   const [sectorFilter, setSectorFilter] = useState('');
 
@@ -193,13 +194,8 @@ function AdminSaaSConsole({ token, deconnecter }) {
     loadData(true);
   }
 
-  async function supprimerAlerte(id) {
-    if (!window.confirm('Voulez-vous supprimer cette alerte ?')) return;
-    await fetch(`${API_BASE}/api/alertes/${id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    loadData(true);
+  async function supprimerAlerte(id, name = 'cette alerte') {
+    openDeleteModal('alerte', id, name);
   }
 
   function openDeleteModal(type, id, name) {
@@ -215,6 +211,11 @@ function AdminSaaSConsole({ token, deconnecter }) {
       });
     } else if (deleteModal.type === 'proprietaire') {
       await fetch(`${API_URL}/admin/proprietaires/${deleteModal.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    } else if (deleteModal.type === 'alerte') {
+      await fetch(`${API_BASE}/api/alertes/${deleteModal.id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -344,7 +345,7 @@ function AdminSaaSConsole({ token, deconnecter }) {
               </div>
               <div className="admin-profile-meta">
                 <strong>Superviser Admin</strong>
-                <span>SunuKeur Dakar</span>
+                <span>DëkuWaay Dakar</span>
               </div>
             </div>
           </div>
@@ -385,7 +386,9 @@ function AdminSaaSConsole({ token, deconnecter }) {
                       <span className="kpi-card-title">Annonces au Total</span>
                       <div className="kpi-icon-wrapper primary"><Building2 size={18} /></div>
                     </div>
-                    <div className="kpi-card-value">{stats?.totalLogements || 0}</div>
+                    <div className="kpi-card-value">
+                      <AnimatedCounter endValue={stats?.totalLogements || 0} duration={1200} />
+                    </div>
                     <div className="kpi-card-footer positive">
                       <TrendingUp size={13} />
                       <span>Volume global soumis</span>
@@ -397,7 +400,9 @@ function AdminSaaSConsole({ token, deconnecter }) {
                       <span className="kpi-card-title">En attente de contrôle</span>
                       <div className="kpi-icon-wrapper warning"><Clock size={18} /></div>
                     </div>
-                    <div className="kpi-card-value">{stats?.enAttente || 0}</div>
+                    <div className="kpi-card-value">
+                      <AnimatedCounter endValue={stats?.enAttente || 0} duration={1200} />
+                    </div>
                     <div className="kpi-card-footer warning">
                       <span>{pendingLogements.length} dossier{pendingLogements.length > 1 ? 's' : ''} à valider</span>
                     </div>
@@ -408,7 +413,9 @@ function AdminSaaSConsole({ token, deconnecter }) {
                       <span className="kpi-card-title">Validées (En ligne)</span>
                       <div className="kpi-icon-wrapper success"><CheckCircle2 size={18} /></div>
                     </div>
-                    <div className="kpi-card-value">{stats?.validees || 0}</div>
+                    <div className="kpi-card-value">
+                      <AnimatedCounter endValue={stats?.validees || 0} duration={1200} />
+                    </div>
                     <div className="kpi-card-footer success">
                       <span>Logements actifs</span>
                     </div>
@@ -419,7 +426,9 @@ function AdminSaaSConsole({ token, deconnecter }) {
                       <span className="kpi-card-title">Refusées</span>
                       <div className="kpi-icon-wrapper danger"><XCircle size={18} /></div>
                     </div>
-                    <div className="kpi-card-value">{stats?.refusees || 0}</div>
+                    <div className="kpi-card-value">
+                      <AnimatedCounter endValue={stats?.refusees || 0} duration={1200} />
+                    </div>
                     <div className="kpi-card-footer neutral">
                       <span>Dossiers non conformes</span>
                     </div>
@@ -430,7 +439,9 @@ function AdminSaaSConsole({ token, deconnecter }) {
                       <span className="kpi-card-title">Bailleurs Inscrits</span>
                       <div className="kpi-icon-wrapper info"><Users size={18} /></div>
                     </div>
-                    <div className="kpi-card-value">{stats?.totalProprietaires || 0}</div>
+                    <div className="kpi-card-value">
+                      <AnimatedCounter endValue={stats?.totalProprietaires || 0} duration={1200} />
+                    </div>
                     <div className="kpi-card-footer positive">
                       <span>Comptes enregistrés</span>
                     </div>
@@ -441,7 +452,9 @@ function AdminSaaSConsole({ token, deconnecter }) {
                       <span className="kpi-card-title">Demandes à traiter</span>
                       <div className="kpi-icon-wrapper orange"><MessageSquare size={18} /></div>
                     </div>
-                    <div className="kpi-card-value">{newDemandes.length}</div>
+                    <div className="kpi-card-value">
+                      <AnimatedCounter endValue={newDemandes.length} duration={1200} />
+                    </div>
                     <div className="kpi-card-footer orange">
                       <span>Mises en relation en attente</span>
                     </div>
@@ -524,7 +537,7 @@ function AdminSaaSConsole({ token, deconnecter }) {
                 <div className="saas-page-header">
                   <div>
                     <h1>File de modération ({pendingLogements.length})</h1>
-                    <p>Vérifiez et contrôlez chaque annonce soumise avant sa diffusion publique sur SunuKeur.</p>
+                    <p>Vérifiez et contrôlez chaque annonce soumise avant sa diffusion publique sur DëkuWaay.</p>
                   </div>
                 </div>
 
@@ -595,7 +608,7 @@ function AdminSaaSConsole({ token, deconnecter }) {
                 <div className="saas-page-header">
                   <div>
                     <h1>Catalogue général des annonces ({filteredLogements.length})</h1>
-                    <p>Gestion et modération de l'ensemble du parc immobilier SunuKeur.</p>
+                    <p>Gestion et modération de l'ensemble du parc immobilier DëkuWaay.</p>
                   </div>
                 </div>
 
@@ -740,36 +753,61 @@ function AdminSaaSConsole({ token, deconnecter }) {
             )}
 
             {/* VIEW 5: DEMANDES DE CONTACT */}
-            {activeSection === 'demandes' && (
-              <div className="saas-view-fade">
-                <div className="saas-page-header">
-                  <div>
-                    <h1>Demandes de contact ({demandes.length})</h1>
-                    <p>Leads et mises en relation enregistrés entre locataires et propriétaires.</p>
-                  </div>
-                </div>
+            {activeSection === 'demandes' && (() => {
+              const q = demandesSearchQuery.trim().toLowerCase();
+              const demandesFiltrees = demandes.filter((d) => {
+                if (!q) return true;
+                return (
+                  (d.nom && d.nom.toLowerCase().includes(q)) ||
+                  (d.telephone && d.telephone.includes(q)) ||
+                  (d.logementTitre && d.logementTitre.toLowerCase().includes(q)) ||
+                  (d.proprietaireNom && d.proprietaireNom.toLowerCase().includes(q)) ||
+                  (d.proprietaireTelephone && d.proprietaireTelephone.includes(q))
+                );
+              });
 
-                <div className="saas-table-container">
-                  <table className="saas-table">
-                    <thead>
-                      <tr>
-                        <th>Chercheur (Locataire)</th>
-                        <th>Téléphone</th>
-                        <th>Annonce visée</th>
-                        <th>Bailleur concerné</th>
-                        <th>Statut</th>
-                        <th style={{ textAlign: 'right' }}>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {demandes.length === 0 ? (
+              return (
+                <div className="saas-view-fade">
+                  <div className="saas-page-header">
+                    <div>
+                      <h1>Demandes de contact ({demandesFiltrees.length})</h1>
+                      <p>Leads et mises en relation enregistrés entre locataires et propriétaires.</p>
+                    </div>
+                  </div>
+
+                  <div className="saas-toolbar" style={{ marginBottom: '16px' }}>
+                    <div className="saas-search-input">
+                      <Search size={16} className="search-icon" />
+                      <input
+                        type="text"
+                        value={demandesSearchQuery}
+                        onChange={(e) => setDemandesSearchQuery(e.target.value)}
+                        placeholder="Filtrer par locataire, bailleur, numéro ou annonce..."
+                      />
+                    </div>
+                  </div>
+
+                  <div className="saas-table-container">
+                    <table className="saas-table">
+                      <thead>
                         <tr>
-                          <td colSpan={6} style={{ textAlign: 'center', padding: '36px', color: 'var(--color-text-muted)' }}>
-                            Aucune demande de contact enregistrée.
-                          </td>
+                          <th>Chercheur (Locataire)</th>
+                          <th>Téléphone</th>
+                          <th>Annonce visée</th>
+                          <th>Bailleur concerné</th>
+                          <th>Statut</th>
+                          <th style={{ textAlign: 'right' }}>Actions</th>
                         </tr>
-                      ) : (
-                        demandes.map((d) => (
+                      </thead>
+                      <tbody>
+                        {demandesFiltrees.length === 0 ? (
+                          <tr>
+                            <td colSpan={6} style={{ textAlign: 'center', padding: '36px', color: 'var(--color-text-muted)' }}>
+                              Aucune demande de contact ne correspond à votre recherche.
+                            </td>
+                          </tr>
+                        ) : (
+                          demandesFiltrees.map((d) => (
                           <tr key={d.id}>
                             <td>
                               <strong className="td-title">{d.nom}</strong>
@@ -783,7 +821,14 @@ function AdminSaaSConsole({ token, deconnecter }) {
                               <span className="td-sub">{d.secteur}</span>
                             </td>
                             <td>
-                              <span className="td-text">{d.telephoneProprietaire || 'Non renseigné'}</span>
+                              <strong className="td-title">{d.proprietaireNom || 'Bailleur inconnu'}</strong>
+                              {d.proprietaireTelephone && d.proprietaireTelephone !== 'Non disponible' ? (
+                                <a href={`tel:${d.proprietaireTelephone}`} className="td-phone-link" style={{ fontSize: '0.825rem', marginTop: '2px', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  <Phone size={12} /> {d.proprietaireTelephone}
+                                </a>
+                              ) : (
+                                <span className="td-sub">Téléphone non disponible</span>
+                              )}
                             </td>
                             <td>
                               <span className={`saas-status-pill ${d.statut === 'nouvelle' ? 'status-pill-warning' : 'status-pill-success'}`}>
@@ -809,7 +854,8 @@ function AdminSaaSConsole({ token, deconnecter }) {
                   </table>
                 </div>
               </div>
-            )}
+              );
+            })()}
 
             {/* VIEW 6: ALERTES RECHERCHE */}
             {activeSection === 'alertes' && (
@@ -884,7 +930,7 @@ function AdminSaaSConsole({ token, deconnecter }) {
                                     <RotateCcw size={15} />
                                   </button>
                                 )}
-                                <button className="icon-btn-square danger" onClick={() => supprimerAlerte(a.id)} title="Supprimer">
+                                <button className="icon-btn-square danger" onClick={() => supprimerAlerte(a.id, `Alerte de ${a.prenom || a.nom || a.telephone}`)} title="Supprimer">
                                   <Trash2 size={15} />
                                 </button>
                               </div>
@@ -1003,9 +1049,11 @@ function AdminSaaSConsole({ token, deconnecter }) {
                 <div className="form-group">
                   <label>Prix mensuel (FCFA)</label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     value={editForm.prix}
-                    onChange={(e) => setEditForm((f) => ({ ...f, prix: e.target.value }))}
+                    onChange={(e) => setEditForm((f) => ({ ...f, prix: e.target.value.replace(/\D/g, '') }))}
                   />
                 </div>
                 <div className="form-group">
@@ -1028,26 +1076,43 @@ function AdminSaaSConsole({ token, deconnecter }) {
 
         {/* MODAL REFUSE */}
         {refuseModalLogement && (
-          <div className="saas-modal-backdrop">
-            <div className="saas-modal-card">
+          <div className="saas-modal-backdrop" onClick={() => setRefuseModalLogement(null)}>
+            <div className="saas-modal-card danger" onClick={(e) => e.stopPropagation()}>
               <div className="modal-card-header">
-                <h3>Motif de refus d'annonce</h3>
-                <button onClick={() => setRefuseModalLogement(null)} className="modal-btn-close"><X size={18} /></button>
+                <div className="modal-card-header-left">
+                  <div className="modal-icon-badge danger">
+                    <XCircle size={22} />
+                  </div>
+                  <h3>Motif de refus d'annonce</h3>
+                </div>
+                <button onClick={() => setRefuseModalLogement(null)} className="modal-btn-close" title="Fermer">
+                  <X size={18} />
+                </button>
               </div>
               <div className="modal-card-body">
                 <p className="modal-subtitle-text">
                   Indiquez la raison du refus pour <strong>"{refuseModalLogement.titre}"</strong> :
                 </p>
-                <textarea
-                  rows={4}
-                  value={refuseReason}
-                  onChange={(e) => setRefuseReason(e.target.value)}
-                  placeholder="Ex : Photos non conformes, tarif incohérent, informations insuffisantes..."
-                />
+                <div>
+                  <label className="modal-input-label">Motif du refus</label>
+                  <textarea
+                    rows={4}
+                    className="saas-modal-textarea"
+                    value={refuseReason}
+                    onChange={(e) => setRefuseReason(e.target.value)}
+                    placeholder="Ex : Photos non conformes, tarif incohérent, informations insuffisantes..."
+                    autoFocus
+                  />
+                </div>
               </div>
               <div className="modal-card-footer">
-                <button className="saas-btn-action secondary" onClick={() => setRefuseModalLogement(null)}>Annuler</button>
-                <button className="saas-btn-action danger" onClick={confirmRefusal}>Confirmer le refus</button>
+                <button className="saas-btn-action secondary" onClick={() => setRefuseModalLogement(null)}>
+                  Annuler
+                </button>
+                <button className="saas-btn-action danger" onClick={confirmRefusal}>
+                  <XCircle size={16} />
+                  <span>Confirmer le refus</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1055,20 +1120,32 @@ function AdminSaaSConsole({ token, deconnecter }) {
 
         {/* MODAL DELETE */}
         {deleteModal && (
-          <div className="saas-modal-backdrop">
-            <div className="saas-modal-card">
+          <div className="saas-modal-backdrop" onClick={() => setDeleteModal(null)}>
+            <div className="saas-modal-card danger" onClick={(e) => e.stopPropagation()}>
               <div className="modal-card-header">
-                <h3>Confirmation de suppression</h3>
-                <button onClick={() => setDeleteModal(null)} className="modal-btn-close"><X size={18} /></button>
+                <div className="modal-card-header-left">
+                  <div className="modal-icon-badge danger">
+                    <Trash2 size={22} />
+                  </div>
+                  <h3>Confirmation de suppression</h3>
+                </div>
+                <button onClick={() => setDeleteModal(null)} className="modal-btn-close" title="Fermer">
+                  <X size={18} />
+                </button>
               </div>
               <div className="modal-card-body">
                 <p className="modal-subtitle-text">
-                  Voulez-vous vraiment supprimer définitivement {deleteModal.type === 'logement' ? 'l\'annonce' : 'le compte'} <strong>"{deleteModal.name}"</strong> ?
+                  Voulez-vous vraiment supprimer définitivement {deleteModal.type === 'logement' ? 'l\'annonce' : deleteModal.type === 'proprietaire' ? 'le compte' : 'l\'alerte'} <strong>"{deleteModal.name}"</strong> ? Cette action est irréversible.
                 </p>
               </div>
               <div className="modal-card-footer">
-                <button className="saas-btn-action secondary" onClick={() => setDeleteModal(null)}>Annuler</button>
-                <button className="saas-btn-action danger" onClick={confirmDeletion}>Supprimer définitivement</button>
+                <button className="saas-btn-action secondary" onClick={() => setDeleteModal(null)}>
+                  Annuler
+                </button>
+                <button className="saas-btn-action danger" onClick={confirmDeletion}>
+                  <Trash2 size={16} />
+                  <span>Supprimer définitivement</span>
+                </button>
               </div>
             </div>
           </div>

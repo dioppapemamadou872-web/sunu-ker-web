@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { UserPlus, Lock, Phone, MessageSquare, Check, X, ShieldCheck, ArrowRight } from 'lucide-react';
+import { UserPlus, Check, X, ArrowRight } from 'lucide-react';
 import { useProprietaire } from '../context/ProprietaireContext';
 import ChampMotDePasse from '../components/ChampMotDePasse';
 import ChampTelephone from '../components/ChampTelephone';
@@ -59,7 +59,7 @@ function InscriptionProprietaire() {
           <UserPlus size={22} />
         </div>
         <h2>Créer un compte propriétaire</h2>
-        <p className="auth-subtitle">Publiez vos annonces et gérez vos logements sur SunuKeur.</p>
+        <p className="auth-subtitle">Publiez vos annonces et gérez vos logements sur DëkuWaay.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form-body">

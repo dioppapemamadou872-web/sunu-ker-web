@@ -1,25 +1,92 @@
 export const API_BASE = 'http://localhost:4000';
+
 export const secteursParDepartement = {
   Dakar: [
-    'Plateau', 'Médina', 'Fann', 'Point E', 'Amitié', 'Fass', 'Gueule Tapée', 'Colobane',
-    'Grand Dakar', 'Biscuiterie', 'HLM', 'Hann Bel-Air', 'Sicap Liberté', 'Grand Yoff',
-    'Patte d\'Oie', 'Parcelles Assainies', 'Cambérène', 'Ngor', 'Ouakam', 'Yoff',
-    'Mermoz', 'Sacré-Cœur', 'Dieuppeul', 'Derklé', 'Ouest Foire', 'Liberté 6',
+    'Almadies',
+    'Amitié',
+    'Baobab',
+    'Biscuiterie',
+    'Cambérène',
+    'Castors',
+    'Cité Keur Gorgui',
+    'Colobane',
+    'Derklé',
+    'Dieuppeul',
+    'Fann',
+    'Fann Hock',
+    'Fass',
+    'Grand Dakar',
+    'Grand Yoff',
+    'Gueule Tapée',
+    'Hann Bel-Air',
+    'Hann Maristes',
+    'HLM',
+    'Karack',
+    'Liberté',
+    'Mamelles',
+    'Médina',
+    'Mermoz',
+    'Ngor',
+    'Niary Tally',
+    'Nord Foire',
+    'Ouakam',
+    'Ouest Foire',
+    'Parcelles Assainies',
+    'Patte d\'Oie',
+    'Plateau',
+    'Point E',
+    'Rebeuss',
+    'Sacré-Cœur',
+    'Scat Urbam',
+    'Soumbédioune',
+    'Sud Foire',
+    'Virage',
+    'Yoff',
+    'Zone de Captage'
   ],
   Pikine: [
-    'Pikine Nord', 'Pikine Est', 'Pikine Ouest', 'Guinaw Rail Nord', 'Guinaw Rail Sud',
-    'Thiaroye', 'Yeumbeul Nord', 'Yeumbeul Sud', 'Malika', 'Keur Massar', 'Djiddah Thiaroye Kao',
+    'Guinaw Rail',
+    'Icotaf',
+    'Malika',
+    'Mbao',
+    'Pikine Est',
+    'Pikine Nord',
+    'Pikine Ouest',
+    'Pikine Sud',
+    'Thiaroye',
+    'Yeumbeul'
   ],
   Guédiawaye: [
-    'Golf Sud', 'Sam Notaire', 'Ndiarème Limamoulaye', 'Wakhinane Nimzatt', 'Médina Gounass',
+    'Golf Nord',
+    'Golf Sud',
+    'Médina Gounass',
+    'Ndiarème Limamoulaye',
+    'Sam Notaire',
+    'Wakhinane Nimzatt'
+  ],
+  'Keur Massar': [
+    'Boune',
+    'Jaxaay',
+    'Keur Massar',
+    'Niacoulrab'
   ],
   Rufisque: [
-    'Rufisque Nord', 'Rufisque Est', 'Rufisque Ouest', 'Bargny', 'Sangalkam',
-    'Diamniadio', 'Sébikotane', 'Yène',
-  ],
+    'Bambilor',
+    'Bargny',
+    'Diamniadio',
+    'Gorée',
+    'Rufisque Est',
+    'Rufisque Nord',
+    'Rufisque Ouest',
+    'Sangalkam',
+    'Sébikotane',
+    'Yène'
+  ]
 };
 
-export const secteurs = Object.values(secteursParDepartement).flat();
+export const secteurs = Array.from(
+  new Set(Object.values(secteursParDepartement).flat())
+).sort((a, b) => a.localeCompare(b, 'fr', { sensitivity: 'base' }));
 
 export const typesLogement = ['Studio', 'Chambre', 'Appartement', 'Maison'];
 

@@ -27,10 +27,10 @@ function AdminLogin() {
       <div className="admin-login-card">
         <div className="admin-login-header">
           <div className="admin-login-logo">
-            <img src={logoIcon} alt="SunuKeur" className="logo-icon" />
+            <img src={logoIcon} alt="DëkuWaay" className="logo-icon" />
             <span className="navbar-brand">
-              <span className="logo-sunu">Sunu</span>
-              <span className="logo-keur">Keur</span>
+              <span className="logo-sunu">Dëku</span>
+              <span className="logo-keur">Waay</span>
             </span>
           </div>
           <div className="admin-badge-security">

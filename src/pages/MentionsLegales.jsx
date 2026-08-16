@@ -56,7 +56,7 @@ function MentionsLegales() {
             maxWidth: '580px',
             lineHeight: 1.6
           }}>
-            Informations juridiques, éditeur et hébergement de la plateforme immobilière SunuKeur.
+            Informations juridiques, éditeur et hébergement de la plateforme immobilière DëkuWaay.
           </p>
 
           <div style={{
@@ -100,7 +100,7 @@ function MentionsLegales() {
             </h2>
             
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 1.25rem 0', fontSize: '0.95rem' }}>
-              Le site web et l'application <strong>SunuKeur</strong> sont édités et exploités par la société SunuKeur S.A.R.L., plateforme de mise en relation immobilière au Sénégal.
+              Le site web et l'application <strong>DëkuWaay</strong> sont édités et exploités par la société DëkuWaay S.A.R.L., plateforme de mise en relation immobilière au Sénégal.
             </p>
 
             <div style={{
@@ -129,7 +129,7 @@ function MentionsLegales() {
                 <Mail size={18} color="#f59e0b" />
                 <div>
                   <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', display: 'block' }}>Email Support</span>
-                  <strong style={{ fontSize: '0.875rem', color: 'var(--color-text)' }}>contact@sunukeur.com</strong>
+                  <strong style={{ fontSize: '0.875rem', color: 'var(--color-text)' }}>contact@dekuwaay.com</strong>
                 </div>
               </div>
             </div>
@@ -157,7 +157,7 @@ function MentionsLegales() {
               2. Hébergement & Infrastructure
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Les infrastructures d'hébergement et les bases de données de SunuKeur sont déployées sur des serveurs haute sécurité garantissant une disponibilité de 99.9% et un chiffrement renforcé des données (SSL / HTTPS TLS 1.3).
+              Les infrastructures d'hébergement et les bases de données de DëkuWaay sont déployées sur des serveurs haute sécurité garantissant une disponibilité de 99.9% et un chiffrement renforcé des données (SSL / HTTPS TLS 1.3).
             </p>
           </div>
 
@@ -183,10 +183,10 @@ function MentionsLegales() {
               3. Propriété Intellectuelle
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 1rem 0', fontSize: '0.95rem' }}>
-              L'ensemble du contenu présent sur le site SunuKeur (logos, textes, visuels, architecture logicielle, bases de données) est protégé par les lois sur la propriété intellectuelle au Sénégal et à l'international.
+              L'ensemble du contenu présent sur le site DëkuWaay (logos, textes, visuels, architecture logicielle, bases de données) est protégé par les lois sur la propriété intellectuelle au Sénégal et à l'international.
             </p>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Toute reproduction, distribution ou extraction non autorisée d'éléments de la plateforme est strictement interdite sans accord écrit préalable de SunuKeur.
+              Toute reproduction, distribution ou extraction non autorisée d'éléments de la plateforme est strictement interdite sans accord écrit préalable de DëkuWaay.
             </p>
           </div>
 

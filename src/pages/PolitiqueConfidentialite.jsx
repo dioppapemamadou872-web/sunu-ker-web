@@ -1,4 +1,4 @@
-import { ShieldCheck, Lock, Database, Target, Clock, HardDrive, UserCheck, Calendar, FileText } from 'lucide-react';
+import { ShieldCheck, Lock, Database, Target, Clock, HardDrive, UserCheck, Calendar, FileText, Eye } from 'lucide-react';
 
 function PolitiqueConfidentialite() {
   return (
@@ -56,7 +56,7 @@ function PolitiqueConfidentialite() {
             maxWidth: '580px',
             lineHeight: 1.6
           }}>
-            Comment nous protégeons vos données personnelles et garantissons la sécurité de vos échanges sur SunuKeur.
+            Comment nous protégeons vos données personnelles et garantissons la sécurité de vos échanges sur DëkuWaay.
           </p>
 
           <div style={{
@@ -94,19 +94,13 @@ function PolitiqueConfidentialite() {
               gap: '0.65rem'
             }}>
               <div style={{ backgroundColor: 'rgba(37, 99, 235, 0.12)', padding: '0.5rem', borderRadius: '10px', display: 'flex' }}>
-                <Database size={20} color="#2563eb" />
+                <ShieldCheck size={20} color="#2563eb" />
               </div>
-              1. Données que nous collectons
+              1. Engagement sur la confidentialité
             </h2>
-            <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 1rem 0', fontSize: '0.95rem' }}>
-              Pour assurer le bon fonctionnement de la plateforme et sécuriser les interactions, nous collectons :
+            <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
+              Chez DëkuWaay, nous accordons une importance primordiale au respect de votre vie privée et à la protection de vos données personnelles. La présente politique décrit de manière transparente la façon dont nous collectons, utilisons et sécurisons vos informations.
             </p>
-            <ul style={{ color: 'var(--color-text-muted)', lineHeight: 1.8, margin: 0, paddingLeft: '1.25rem', fontSize: '0.95rem' }}>
-              <li><strong>Comptes Bailleurs / Propriétaires</strong> : Nom, prénom, numéro de téléphone principal et WhatsApp.</li>
-              <li><strong>Informations complémentaires (optionnelles)</strong> : Adresse email et photo de profil.</li>
-              <li><strong>Chercheurs de Logements</strong> : Nom et numéro de téléphone transmis uniquement lors d'une demande d'information ou d'alerte.</li>
-              <li><strong>Annonces publiées</strong> : Photos du bien, caractéristiques et statut déclaré du publicateur.</li>
-            </ul>
           </div>
 
           {/* SECTION 2 */}
@@ -126,13 +120,18 @@ function PolitiqueConfidentialite() {
               gap: '0.65rem'
             }}>
               <div style={{ backgroundColor: 'rgba(37, 99, 235, 0.12)', padding: '0.5rem', borderRadius: '10px', display: 'flex' }}>
-                <Target size={20} color="#2563eb" />
+                <Database size={20} color="#2563eb" />
               </div>
-              2. Utilisation des données
+              2. Données collectées
             </h2>
-            <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Vos informations personnelles servent uniquement à faire fonctionner la plateforme : vérifier l'authenticité des annonces, vous informer par alerte WhatsApp des logements disponibles et organiser la mise en relation sécurisée entre bailleurs et candidats locataires.
+            <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: '0 0 0.75rem 0', fontSize: '0.95rem' }}>
+              Nous ne collectons que les informations strictement nécessaires à la mise en relation immobilière et à la gestion de votre compte :
             </p>
+            <ul style={{ color: 'var(--color-text-muted)', lineHeight: 1.8, margin: 0, paddingLeft: '1.25rem', fontSize: '0.95rem' }}>
+              <li><strong>Compte Bailleur :</strong> Prénom, nom, numéro de téléphone, numéro WhatsApp, adresse email facultative et photo de profil.</li>
+              <li><strong>Formulaire de contact :</strong> Prénom, nom et numéro de téléphone pour la mise en relation directe.</li>
+              <li><strong>Alerte Recherche :</strong> Critères de recherche (secteur, budget, type) et coordonnées de contact.</li>
+            </ul>
           </div>
 
           {/* SECTION 3 */}
@@ -152,12 +151,12 @@ function PolitiqueConfidentialite() {
               gap: '0.65rem'
             }}>
               <div style={{ backgroundColor: 'rgba(37, 99, 235, 0.12)', padding: '0.5rem', borderRadius: '10px', display: 'flex' }}>
-                <ShieldCheck size={20} color="#2563eb" />
+                <Eye size={20} color="#2563eb" />
               </div>
-              3. Procédure de vérification des annonces
+              3. Utilisation des données
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Chaque annonce publiée repose sur une déclaration sur l'honneur du publicateur, complétée par une vérification manuelle par notre équipe (contrôle de conformité des visuels et prise de contact téléphonique). Un justificatif complémentaire peut être exigé en cas de doute.
+              Vos données personnelles sont utilisées exclusivement pour assurer le bon fonctionnement de nos services (mise en relation avec les propriétaires, notifications d'alertes WhatsApp/Email et vérification des annonces). <strong>Vos données ne sont jamais vendues, cédées ou louées à des tiers.</strong>
             </p>
           </div>
 
@@ -180,10 +179,10 @@ function PolitiqueConfidentialite() {
               <div style={{ backgroundColor: 'rgba(37, 99, 235, 0.12)', padding: '0.5rem', borderRadius: '10px', display: 'flex' }}>
                 <Lock size={20} color="#2563eb" />
               </div>
-              4. Confidentialité et Non-divulgation
+              4. Sécurité & Chiffrement
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Votre numéro de téléphone direct n'est jamais affiché publiquement en clair sur le site. Il est uniquement utilisé par notre équipe et communiqué avec votre accord au locataire ou propriétaire concerné pour concrétiser la visite. Nous ne vendons ni ne cédons jamais vos données à des tiers à des fins publicitaires.
+              Tous les mots de passe sont hachés de manière sécurisée via l'algorithme `bcrypt` avant stockage. Les échanges entre votre navigateur et nos serveurs sont intégralement chiffrés via le protocole HTTPS / TLS.
             </p>
           </div>
 
@@ -204,12 +203,12 @@ function PolitiqueConfidentialite() {
               gap: '0.65rem'
             }}>
               <div style={{ backgroundColor: 'rgba(37, 99, 235, 0.12)', padding: '0.5rem', borderRadius: '10px', display: 'flex' }}>
-                <Clock size={20} color="#2563eb" />
+                <UserCheck size={20} color="#2563eb" />
               </div>
-              5. Conservation & Droit à l'oubli
+              5. Vos droits (Accès, Modification, Suppression)
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Vos données sont conservées aussi longtemps que votre compte reste actif. Vous pouvez à tout moment supprimer votre compte depuis la section "Mon espace", ce qui entraîne la suppression définitive et irréversible de l'ensemble de votre profil et de vos annonces.
+              Vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles à tout moment depuis votre espace personnel ou en nous écrivant directement via notre page de contact.
             </p>
           </div>
 
@@ -235,7 +234,7 @@ function PolitiqueConfidentialite() {
               6. Stockage local & Cookies
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              SunuKeur utilise le stockage local (`localStorage`) de votre navigateur exclusivement pour conserver votre préférence de thème (clair/sombre) et maintenir votre session active. Aucun cookie tiers ou traceur publicitaire n'est déposé sur votre appareil.
+              DëkuWaay utilise le stockage local (`localStorage`) de votre navigateur exclusivement pour conserver votre préférence de thème (clair/sombre) et maintenir votre session active. Aucun cookie tiers ou traceur publicitaire n'est déposé sur votre appareil.
             </p>
           </div>
 

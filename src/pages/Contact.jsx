@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ChevronDown, Phone, MessageCircle, Mail, Clock, Headset, Send, HelpCircle, CheckCircle2, PhoneCall } from 'lucide-react';
+import ScrollReveal from '../components/ScrollReveal';
 
 const questions = [
   {
-    q: 'Comment publier une annonce sur SunuKeur ?',
+    q: 'Comment publier une annonce sur DëkuWaay ?',
     r: 'Créez un compte propriétaire, puis rendez-vous sur "Publier une annonce". Remplissez les informations de votre logement (photos, prix, description...) et soumettez. Votre annonce sera vérifiée par notre équipe avant d\'être publiée.',
   },
   {
@@ -19,7 +20,7 @@ const questions = [
     r: 'Rendez-vous dans "Mon espace", puis cliquez sur l\'icône de suppression à côté de l\'annonce concernée.',
   },
   {
-    q: 'Est-ce que l\'utilisation de SunuKeur est payante ?',
+    q: 'Est-ce que l\'utilisation de DëkuWaay est payante ?',
     r: 'Non, la publication d\'annonces et la recherche de logements sont actuellement entièrement gratuites.',
   },
 ];
@@ -39,18 +40,20 @@ function Contact() {
   return (
     <div className="contact-page-modern">
       {/* HEADER BANNER */}
-      <div className="contact-page-header text-center">
-        <div className="contact-badge-top">
-          <Headset size={15} /> Support SunuKeur
+      <ScrollReveal animation="slide-up">
+        <div className="contact-page-header text-center">
+          <div className="contact-badge-top">
+            <Headset size={15} /> Support DëkuWaay
+          </div>
+          <h1>Nous contacter</h1>
+          <p>Une question, un problème avec une annonce ou votre compte ? Notre équipe est là pour vous aider.</p>
         </div>
-        <h1>Nous contacter</h1>
-        <p>Une question, un problème avec une annonce ou votre compte ? Notre équipe est là pour vous aider.</p>
-      </div>
+      </ScrollReveal>
 
       {/* GRID CONTACT & FORM */}
       <div className="contact-grid-v2">
         {/* INFOS CARDS */}
-        <div className="card contact-card-left">
+        <ScrollReveal animation="slide-up" delay={0} className="card contact-card-left">
           <h3>
             <PhoneCall size={20} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-primary)' }} />
             Contact direct
@@ -78,13 +81,13 @@ function Contact() {
               </div>
             </a>
 
-            <a href="mailto:contact@sunukeur.com" className="channel-item">
+            <a href="mailto:contact@dekuwaay.com" className="channel-item">
               <div className="channel-icon-bg info">
                 <Mail size={18} />
               </div>
               <div>
                 <span className="channel-title">Email</span>
-                <strong className="channel-detail">contact@sunukeur.com</strong>
+                <strong className="channel-detail">contact@dekuwaay.com</strong>
               </div>
             </a>
 
@@ -98,28 +101,39 @@ function Contact() {
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        {/* FORM CARD */}
+        {/* FORM CARD (STATIC FOR ZERO SCROLL FLICKER/JUMP) */}
         <div className="card contact-card-right">
-          <h3>
-            <Send size={19} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-primary)' }} />
-            Envoyez-nous un message
-          </h3>
-          <p className="card-subtext">Remplissez le formulaire ci-dessous et nous vous répondrons rapidement.</p>
+          <h3>Formulaire de message</h3>
+          <p className="card-subtext">Remplissez ce formulaire, nous vous répondrons sous 24 heures.</p>
 
           {envoye ? (
-            <div className="contact-success-banner">
-              <CheckCircle2 size={36} style={{ color: 'var(--color-secondary)' }} />
+            <div className="alert-success-box text-center" style={{ padding: '32px 20px' }}>
+              <CheckCircle2 size={40} style={{ color: 'var(--color-secondary)', marginBottom: '12px' }} />
               <h4>Message envoyé avec succès !</h4>
-              <p>Votre message a bien été envoyé. Nous vous répondrons rapidement.</p>
+              <p>Merci pour votre message. Notre équipe va le traiter et vous recontacter au plus vite.</p>
+              <button
+                className="btn-secondary"
+                style={{ marginTop: '16px' }}
+                onClick={() => {
+                  setEnvoye(false);
+                  setNom('');
+                  setEmail('');
+                  setMessage('');
+                }}
+              >
+                Envoyer un autre message
+              </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="contact-form-v2">
+            <form onSubmit={handleSubmit} className="contact-form">
               <div className="form-group">
-                <label>Nom</label>
+                <label htmlFor="nom">Nom complet</label>
                 <input
+                  id="nom"
                   type="text"
+                  placeholder="Ex : Ousmane Diallo"
                   value={nom}
                   onChange={(e) => setNom(e.target.value)}
                   required
@@ -127,9 +141,11 @@ function Contact() {
               </div>
 
               <div className="form-group">
-                <label>Email</label>
+                <label htmlFor="email">Adresse email</label>
                 <input
+                  id="email"
                   type="email"
+                  placeholder="Ex : ousmane@gmail.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -137,49 +153,55 @@ function Contact() {
               </div>
 
               <div className="form-group">
-                <label>Message</label>
+                <label htmlFor="message">Message</label>
                 <textarea
+                  id="message"
                   rows={4}
+                  placeholder="Précisez votre demande..."
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   required
                 />
               </div>
 
-              <button type="submit" className="btn-primary" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', justifyContent: 'center' }}>
-                <Send size={16} /> Envoyer
+              <button type="submit" className="btn-primary btn-block btn-lg" style={{ marginTop: '12px' }}>
+                <Send size={16} /> Envoyer le message
               </button>
             </form>
           )}
         </div>
       </div>
 
-      {/* FAQ ACCORDION */}
-      <div className="card contact-faq-card">
-        <h3>
-          <HelpCircle size={19} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-primary)' }} />
-          Questions fréquentes
-        </h3>
-        <p className="card-subtext" style={{ marginBottom: '20px' }}>
-          Retrouvez les réponses aux questions les plus posées sur l'utilisation de SunuKeur.
-        </p>
+      {/* FAQ EXPRESS ACCORDEON */}
+      <ScrollReveal animation="slide-up" className="card faq-section-card" style={{ marginTop: '32px' }}>
+        <div className="section-title-header">
+          <h3>
+            <HelpCircle size={20} style={{ verticalAlign: 'middle', marginRight: '8px', color: 'var(--color-primary)' }} />
+            Questions fréquentes
+          </h3>
+          <p className="card-subtext">Retrouvez les réponses aux questions les plus posées par nos utilisateurs.</p>
+        </div>
 
-        <div className="faq-list-v2">
-          {questions.map((item, i) => (
-            <div key={i} className={`faq-item-v2 ${ouverte === i ? 'open' : ''}`}>
-              <button className="faq-toggle-btn" onClick={() => setOuverte(ouverte === i ? null : i)}>
-                <span>{item.q}</span>
+        <div className="faq-list">
+          {questions.map(({ q, r }, i) => (
+            <div key={q} className={`faq-item ${ouverte === i ? 'ouverte' : ''}`}>
+              <button
+                className="faq-question"
+                onClick={() => setOuverte(ouverte === i ? null : i)}
+                aria-expanded={ouverte === i}
+              >
+                <span>{q}</span>
                 <ChevronDown size={18} className="faq-chevron" />
               </button>
               {ouverte === i && (
-                <div className="faq-answer-body">
-                  <p>{item.r}</p>
+                <div className="faq-reponse">
+                  <p>{r}</p>
                 </div>
               )}
             </div>
           ))}
         </div>
-      </div>
+      </ScrollReveal>
     </div>
   );
 }

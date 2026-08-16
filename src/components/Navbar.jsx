@@ -75,8 +75,8 @@ function Navbar() {
   return (
     <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
       <Link to="/" className="navbar-logo">
-        <img src={logoIcon} alt="SunuKeur" className="logo-icon" />
-        <span className="navbar-brand"><span className="logo-sunu">Sunu</span><span className="logo-keur">Keur</span></span>
+        <img src={logoIcon} alt="DëkuWaay" className="logo-icon" />
+        <span className="navbar-brand"><span className="logo-sunu">Dëku</span><span className="logo-keur">Waay</span></span>
       </Link>
 
       <div className={`navbar-links ${menuOuvert ? 'ouvert' : ''}`}>

@@ -56,7 +56,7 @@ function ConditionsUtilisation() {
             maxWidth: '580px',
             lineHeight: 1.6
           }}>
-            Les règles et principes régissant l'utilisation de la plateforme immobilière SunuKeur.
+            Les règles et principes régissant l'utilisation de la plateforme immobilière DëkuWaay.
           </p>
 
           <div style={{
@@ -99,7 +99,7 @@ function ConditionsUtilisation() {
               1. Objet du service
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              SunuKeur est une plateforme numérique facilitant la recherche, la publication et la mise en relation pour la location et la vente de logements à Dakar et au Sénégal. SunuKeur agit en qualité d'intermédiaire technique et n'est pas partie directe aux baux de location conclus entre les utilisateurs.
+              DëkuWaay est une plateforme numérique facilitant la recherche, la publication et la mise en relation pour la location et la vente de logements à Dakar et au Sénégal. DëkuWaay agit en qualité d'intermédiaire technique et n'est pas partie directe aux baux de location conclus entre les utilisateurs.
             </p>
           </div>
 
@@ -122,10 +122,10 @@ function ConditionsUtilisation() {
               <div style={{ backgroundColor: 'rgba(37, 99, 235, 0.12)', padding: '0.5rem', borderRadius: '10px', display: 'flex' }}>
                 <UserCheck size={20} color="#2563eb" />
               </div>
-              2. Inscription et Déclaration sur l'Honneur
+              2. Accès au Service & Compte Utilisateur
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              La publication d'une annonce requiert la création d'un compte propriétaire. Le publicateur certifie son statut (propriétaire direct, mandataire ou membre de la famille autorisé) et signe une déclaration sur l'honneur certifiant détenir les droits requis. Toute fausse déclaration entraîne la suspension immédiate du compte.
+              L'accès à la consultation des annonces est libre et sans obligation de création de compte. La publication d’annonces et l'envoi de demandes de contact nécessitent la création d'un compte utilisateur (bailleur ou locataire) protégé par identifiant et mot de passe.
             </p>
           </div>
 
@@ -151,7 +151,7 @@ function ConditionsUtilisation() {
               3. Procédure de Modération & Vérification
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Chaque annonce fait l'objet d'un examen attentif avant sa mise en ligne. SunuKeur se réserve le droit de solliciter des justificatifs complémentaires en cas de doute, d'ajuster ou de refuser toute annonce ne satisfaisant pas aux critères de qualité et de sécurité de la plateforme.
+              Chaque annonce fait l'objet d'un examen attentif avant sa mise en ligne. DëkuWaay se réserve le droit de solliciter des justificatifs complémentaires en cas de doute, d'ajuster ou de refuser toute annonce ne satisfaisant pas aux critères de qualité et de sécurité de la plateforme.
             </p>
           </div>
 
@@ -206,7 +206,7 @@ function ConditionsUtilisation() {
               5. Limitation de Responsabilité
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              Bien que SunuKeur mette en œuvre des procédures rigoureuses de contrôle des annonces, les utilisateurs demeurent seuls responsables des accords, baux et transactions financières qu'ils concluent. SunuKeur ne saurait être tenu responsable des différends ultérieurs entre bailleurs et locataires.
+              Bien que DëkuWaay mette en œuvre des procédures rigoureuses de contrôle des annonces, les utilisateurs demeurent seuls responsables des accords, baux et transactions financières qu'ils concluent. DëkuWaay ne saurait être tenu responsable des différends ultérieurs entre bailleurs et locataires.
             </p>
           </div>
 
@@ -258,7 +258,7 @@ function ConditionsUtilisation() {
               7. Évolution des Conditions
             </h2>
             <p style={{ color: 'var(--color-text-muted)', lineHeight: 1.7, margin: 0, fontSize: '0.95rem' }}>
-              SunuKeur se réserve le droit d'actualiser les présentes conditions d'utilisation afin de les adapter aux évolutions légales ou techniques. La date de dernière mise à jour est systématiquement mentionnée en haut de la présente page.
+              DëkuWaay se réserve le droit d'actualiser les présentes conditions d'utilisation afin de les adapter aux évolutions légales ou techniques. La date de dernière mise à jour est systématiquement mentionnée en haut de la présente page.
             </p>
           </div>
 

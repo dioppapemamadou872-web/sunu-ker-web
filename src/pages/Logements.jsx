@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
-import { SearchX, ArrowUpDown, Building2, SlidersHorizontal, X, Bell, Sparkles } from 'lucide-react';
+import { SearchX, ArrowUpDown, Building2, X, Bell, Sparkles } from 'lucide-react';
 import { useLogements } from '../context/LogementsContext';
 import SearchBar from '../components/SearchBar';
 import LogementCard from '../components/LogementCard';
+import SkeletonCard from '../components/SkeletonCard';
+import ScrollReveal from '../components/ScrollReveal';
 
 function Logements() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -97,22 +99,24 @@ function Logements() {
       {/* LOGEMENT GRID / SKELETON / EMPTY STATE */}
       <div className="logement-grid">
         {chargement ? (
-          Array.from({ length: 6 }).map((_, i) => <div key={i} className="skeleton-card" />)
+          Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)
         ) : resultats.length > 0 ? (
-          resultats.map((l) => (
-            <Link key={l.id} to={`/logements/${l.id}`} style={{ textDecoration: 'none' }}>
-              <LogementCard
-                id={l.id}
-                titre={l.titre}
-                prix={l.prix}
-                type={l.type}
-                secteur={l.secteur}
-                statut={l.statut}
-                photos={l.photos}
-                disponibilite={l.disponibilite}
-                datePublication={l.datePublication}
-              />
-            </Link>
+          resultats.map((l, index) => (
+            <ScrollReveal key={l.id} animation="slide-up" delay={(index % 6) * 70}>
+              <Link to={`/logements/${l.id}`} style={{ textDecoration: 'none' }}>
+                <LogementCard
+                  id={l.id}
+                  titre={l.titre}
+                  prix={l.prix}
+                  type={l.type}
+                  secteur={l.secteur}
+                  statut={l.statut}
+                  photos={l.photos}
+                  disponibilite={l.disponibilite}
+                  datePublication={l.datePublication}
+                />
+              </Link>
+            </ScrollReveal>
           ))
         ) : (
           <div className="empty-state" style={{ padding: '60px 20px', gridColumn: '1 / -1' }}>
@@ -141,47 +145,39 @@ function Logements() {
 
       {/* BANNIÈRE CRÉER UNE ALERTE SI DES RÉSULTATS EXISTENT */}
       {resultats.length > 0 && (
-        <div style={{
-          marginTop: '3rem',
-          backgroundColor: '#eff6ff',
-          borderRadius: '16px',
-          border: '1px solid #bfdbfe',
-          padding: '2rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '1.5rem'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-            <div style={{
-              backgroundColor: '#2563eb',
-              color: '#ffffff',
-              padding: '1rem',
-              borderRadius: '14px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <Bell size={28} />
+        <ScrollReveal animation="slide-up" delay={200}>
+          <div className="logement-alert-banner">
+            <div className="logement-alert-banner-glow" />
+            <div className="logement-alert-banner-content">
+              <div className="logement-alert-banner-icon-wrapper">
+                <div className="logement-alert-banner-icon">
+                  <Bell size={26} />
+                </div>
+                <span className="logement-alert-banner-pulse" />
+              </div>
+              <div className="logement-alert-banner-text">
+                <div className="logement-alert-banner-header">
+                  <h4 className="logement-alert-banner-title">
+                    Vous ne trouvez pas le logement idéal ?
+                  </h4>
+                  <span className="logement-alert-banner-badge">
+                    <Sparkles size={12} /> Gratuit & Instantané
+                  </span>
+                </div>
+                <p className="logement-alert-banner-desc">
+                  Activez une alerte recherche et recevez une notification WhatsApp en priorité dès la mise en ligne d'un bien !
+                </p>
+              </div>
             </div>
-            <div>
-              <h4 style={{ margin: '0 0 0.35rem 0', fontSize: '1.15rem', color: '#1e3a8a', fontWeight: 700 }}>
-                Vous ne trouvez pas le logement idéal ?
-              </h4>
-              <p style={{ margin: 0, color: '#3b82f6', fontSize: '0.925rem' }}>
-                Activez une alerte recherche et recevez une notification WhatsApp en priorité dès la mise en ligne d'un bien !
-              </p>
-            </div>
+            <Link 
+              to="/creer-alerte"
+              className="logement-alert-banner-btn"
+            >
+              <Sparkles size={18} />
+              <span>Activer mon alerte</span>
+            </Link>
           </div>
-          <Link 
-            to="/creer-alerte"
-            className="btn-primary"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', whitespace: 'nowrap', textDecoration: 'none' }}
-          >
-            <Sparkles size={18} /> Activer mon alerte
-          </Link>
-        </div>
+        </ScrollReveal>
       )}
     </div>
   );

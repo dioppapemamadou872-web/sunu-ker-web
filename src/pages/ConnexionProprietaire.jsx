@@ -30,7 +30,7 @@ function ConnexionProprietaire() {
           <LogIn size={22} />
         </div>
         <h2>Connexion Propriétaire</h2>
-        <p className="auth-subtitle">Accédez à votre espace bailleur SunuKeur.</p>
+        <p className="auth-subtitle">Accédez à votre espace bailleur DëkuWaay.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="auth-form-body">

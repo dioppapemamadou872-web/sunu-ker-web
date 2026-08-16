@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react';
 import { API_URL } from '../config';
+import { logementsInitiaux } from '../data/logements';
 
 const LogementsContext = createContext();
 
@@ -12,10 +13,17 @@ export function LogementsProvider({ children }) {
       const res = await fetch(`${API_URL}/logements`);
       if (res.ok) {
         const data = await res.json();
-        setLogements(Array.isArray(data) ? data : []);
+        if (Array.isArray(data) && data.length > 0) {
+          setLogements(data);
+        } else {
+          setLogements(logementsInitiaux);
+        }
+      } else {
+        setLogements(logementsInitiaux);
       }
     } catch (e) {
       console.error('Erreur lors du chargement des logements :', e);
+      setLogements(logementsInitiaux);
     } finally {
       setChargement(false);
     }

@@ -120,7 +120,7 @@ export default function CreerAlerte() {
             Créer une Alerte Recherche
           </h1>
           <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
-            Recevez une notification instantanée sur WhatsApp dès qu'un bien correspondant à vos critères est publié sur Sunu Ker.
+            Recevez une notification instantanée sur WhatsApp dès qu'un bien correspondant à vos critères est publié sur DëkuWaay.
           </p>
         </div>
 
@@ -234,10 +234,12 @@ export default function CreerAlerte() {
                     <Wallet size={14} style={{ display: 'inline', marginRight: '4px' }} /> Loyer Maximum Mensuel (FCFA)
                   </label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     placeholder="Ex: 150000"
                     value={budgetMax}
-                    onChange={(e) => setBudgetMax(e.target.value)}
+                    onChange={(e) => setBudgetMax(e.target.value.replace(/\D/g, ''))}
                     style={inputStyle}
                   />
                 </div>

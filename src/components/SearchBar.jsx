@@ -20,11 +20,15 @@ function SearchBar() {
 
   return (
     <form className="search-bar" onSubmit={handleSubmit}>
+      {/* FIELD 1: QUARTIER */}
       <div className="search-field">
-        <MapPin size={18} className="search-icon" />
+        <div className="search-field-icon-box">
+          <MapPin size={17} />
+        </div>
         <div className="search-input-wrapper">
+          <span className="search-field-mini-label">QUARTIER</span>
           <select value={secteur} onChange={(e) => setSecteur(e.target.value)}>
-            <option value="">Quartier</option>
+            <option value="">Tous les quartiers</option>
             {secteurs.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
@@ -33,11 +37,17 @@ function SearchBar() {
         </div>
       </div>
 
+      <div className="search-divider" />
+
+      {/* FIELD 2: TYPE DE LOGEMENT */}
       <div className="search-field">
-        <Home size={18} className="search-icon" />
+        <div className="search-field-icon-box">
+          <Home size={17} />
+        </div>
         <div className="search-input-wrapper">
+          <span className="search-field-mini-label">TYPE DE LOGEMENT</span>
           <select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="">Type de logement</option>
+            <option value="">Tous types de biens</option>
             {typesLogement.map((t) => (
               <option key={t} value={t}>{t}</option>
             ))}
@@ -46,19 +56,27 @@ function SearchBar() {
         </div>
       </div>
 
+      <div className="search-divider" />
+
+      {/* FIELD 3: BUDGET MAX */}
       <div className="search-field">
-        <Wallet size={18} className="search-icon" />
+        <div className="search-field-icon-box">
+          <Wallet size={17} />
+        </div>
         <div className="search-input-wrapper">
+          <span className="search-field-mini-label">BUDGET MAX (FCFA)</span>
           <input
-            type="number"
-            placeholder="Budget max (FCFA)"
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Ex : 150 000"
             value={budgetMax}
-            onChange={(e) => setBudgetMax(e.target.value)}
-            onWheel={(e) => e.target.blur()}
+            onChange={(e) => setBudgetMax(e.target.value.replace(/\D/g, ''))}
           />
         </div>
       </div>
 
+      {/* SUBMIT CTA BUTTON */}
       <button type="submit" className="btn-search">
         <Search size={18} />
         <span>Rechercher</span>

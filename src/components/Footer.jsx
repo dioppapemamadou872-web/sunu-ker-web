@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Phone, MessageCircle, Mail, MapPin, Building2, HelpCircle } from 'lucide-react';
+import { ShieldCheck, Phone, MessageCircle, Mail, MapPin } from 'lucide-react';
 import logoIcon from '../assets/logo-icon.png';
 
 function Footer() {
@@ -10,10 +10,10 @@ function Footer() {
           {/* COL 1: BRAND */}
           <div className="footer-col-brand">
             <Link to="/" className="footer-logo-link">
-              <img src={logoIcon} alt="SunuKeur" className="footer-logo-img" />
+              <img src={logoIcon} alt="DëkuWaay" className="footer-logo-img" />
               <span className="footer-brand-name">
-                <span className="logo-sunu">Sunu</span>
-                <span className="logo-keur">Keur</span>
+                <span className="logo-sunu">Dëku</span>
+                <span className="logo-keur">Waay</span>
               </span>
             </Link>
             <p className="footer-brand-desc">
@@ -32,7 +32,7 @@ function Footer() {
               <li><Link to="/logements">Logements disponibles</Link></li>
               <li><Link to="/publier">Publier une annonce</Link></li>
               <li><Link to="/creer-alerte">Créer une alerte logement</Link></li>
-              <li><Link to="/a-propos">À propos de SunuKeur</Link></li>
+              <li><Link to="/a-propos">À propos de DëkuWaay</Link></li>
               <li><Link to="/contact">Support & Contact</Link></li>
             </ul>
           </div>
@@ -41,7 +41,7 @@ function Footer() {
           <div className="footer-col-links">
             <h4>Informations</h4>
             <ul>
-              <li><Link to="/contact">Foire aux questions (FAQ)</Link></li>
+              <li><Link to="/faq">Foire aux questions (FAQ)</Link></li>
               <li><Link to="/mentions-legales">Mentions légales</Link></li>
               <li><Link to="/politique-confidentialite">Politique de confidentialité</Link></li>
               <li><Link to="/conditions-utilisation">Conditions d'utilisation</Link></li>
@@ -60,9 +60,9 @@ function Footer() {
                 <MessageCircle size={15} />
                 <span>WhatsApp 24/7</span>
               </a>
-              <a href="mailto:contact@sunukeur.com" className="footer-contact-row">
+              <a href="mailto:contact@dekuwaay.com" className="footer-contact-row">
                 <Mail size={15} className="footer-icon-primary" />
-                <span>contact@sunukeur.com</span>
+                <span>contact@dekuwaay.com</span>
               </a>
               <div className="footer-contact-row">
                 <MapPin size={15} className="footer-icon-muted" />
@@ -74,7 +74,7 @@ function Footer() {
 
         {/* BOTTOM COPYRIGHT */}
         <div className="footer-bottom-v2">
-          <p>&copy; 2026 SunuKeur — Tous droits réservés. Dakar, Sénégal.</p>
+          <p>&copy; 2026 DëkuWaay — Tous droits réservés. Dakar, Sénégal.</p>
           <div className="footer-bottom-links">
             <Link to="/mentions-legales">Mentions légales</Link>
             <span>•</span>

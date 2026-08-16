@@ -136,12 +136,24 @@ export function ProprietaireProvider({ children }) {
     return data.photoProfil;
   }
 
+  async function supprimerPhoto() {
+    const res = await fetch(`${API_URL}/proprietaires/photo`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.erreur || 'Erreur lors de la suppression de la photo');
+    setPhotoProfil(null);
+    return null;
+  }
+
   return (
     <ProprietaireContext.Provider
       value={{
         token, prenom, nom, photoProfil, estConnecte: !!token,
         inscrire, connecter, deconnecter,
-        recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto, supprimerCompte,
+        recupererProfil, modifierProfil, changerMotDePasse, uploaderPhoto, supprimerPhoto, supprimerCompte,
       }}
     >
       {children}

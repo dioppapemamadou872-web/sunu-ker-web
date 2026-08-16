@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft, MapPin, BedDouble, Sofa, BadgeCheck, Heart, Share2, X,
-  ChevronLeft, ChevronRight, ZoomIn, Calendar, Lock, UserCheck, MessageCircle,
-  Phone, Send, Sparkles, CheckCircle2, ShieldCheck
+  ChevronLeft, ChevronRight, ZoomIn, Calendar, Lock, UserCheck,
+  Send, CheckCircle2, ShieldCheck, Video, Bath
 } from 'lucide-react';
 import { useLogements } from '../context/LogementsContext';
 import { useFavoris } from '../context/FavorisContext';
@@ -11,6 +11,8 @@ import { useProprietaire } from '../context/ProprietaireContext';
 import { API_BASE } from '../config';
 import { estNouveau } from '../utils';
 import ChampTelephone from '../components/ChampTelephone';
+
+import logoIcon from '../assets/logo-icon.png';
 
 function formaterDate(dateISO) {
   if (!dateISO) return null;
@@ -25,9 +27,24 @@ function formaterDate(dateISO) {
   return `Ajouté le ${date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
 }
 
+function LogementCoverPlaceholder({ type, secteur }) {
+  return (
+    <div className="logement-placeholder-cover" style={{ minHeight: '340px' }}>
+      <div className="placeholder-card-glass" style={{ padding: '28px 40px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: '8px' }}>
+        <img src={logoIcon} alt="DëkuWaay Logo" className="placeholder-logo" style={{ width: '76px', height: '76px', objectFit: 'contain' }} />
+        <span className="placeholder-tag" style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--color-primary)', letterSpacing: '0.04em', textTransform: 'uppercase', marginTop: '6px' }}>
+          {type || 'Logement'} · {secteur || 'Dakar'}
+        </span>
+        <span className="placeholder-subtext" style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)', fontWeight: 500 }}>
+          Photos à venir par le propriétaire
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function LogementDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
   const { logements, chargement, ajouterDemande, rafraichir } = useLogements();
   const { estFavori, basculerFavori } = useFavoris();
   const { estConnecte, prenom, nom: nomUser } = useProprietaire();
@@ -56,6 +73,11 @@ function LogementDetail() {
   }, [estConnecte, prenom, nomUser]);
 
   const photos = logement?.photos?.length ? logement.photos : null;
+  const listeVideos = logement?.videos?.length
+    ? logement.videos
+    : logement?.video
+    ? [logement.video]
+    : [];
 
   const imageSuivante = useCallback(() => {
     if (!photos) return;
@@ -117,7 +139,7 @@ function LogementDetail() {
     const url = window.location.href;
     if (navigator.share) {
       try {
-        await navigator.share({ title: logement.titre, text: `Découvrez ce logement sur SunuKeur : ${logement.titre}`, url });
+        await navigator.share({ title: logement.titre, text: `Découvrez ce logement sur DëkuWaay : ${logement.titre}`, url });
       } catch {
         // annulé
       }
@@ -160,27 +182,39 @@ function LogementDetail() {
       {lienCopie && <p className="alert-success-msg" style={{ marginBottom: '16px' }}>Lien copié dans le presse-papiers !</p>}
 
       {/* GALERIE EN TÊTE SAAS */}
-      <div
-        className="logement-hero-gallery"
-        style={{ backgroundImage: `url(${imageActuelle})` }}
-        onClick={() => photos && setLightboxOuverte(true)}
-      >
-        <div className="gallery-badges-row">
-          <span className={`badge ${estLoue ? 'badge-loue' : 'badge-available'}`}>
-            {estLoue ? 'Loué' : 'Disponible'}
-          </span>
-          {logement.statut === 'validee' && (
-            <span className="badge badge-verified"><BadgeCheck size={14} /> Vérifié par SunuKeur</span>
-          )}
-          {nouveau && <span className="badge badge-nouveau">Nouveau</span>}
-        </div>
+      {photos ? (
+        <div
+          className="logement-hero-gallery"
+          style={{ backgroundImage: `url(${imageActuelle})` }}
+          onClick={() => setLightboxOuverte(true)}
+        >
+          <div className="gallery-badges-row">
+            <span className={`badge ${estLoue ? 'badge-loue' : 'badge-available'}`}>
+              {estLoue ? 'Loué' : 'Disponible'}
+            </span>
+            {logement.statut === 'validee' && (
+              <span className="badge badge-verified"><BadgeCheck size={14} /> Vérifié par DëkuWaay</span>
+            )}
+            {nouveau && <span className="badge badge-nouveau">Nouveau</span>}
+          </div>
 
-        {photos && (
           <button className="galerie-zoom-btn" onClick={(e) => { e.stopPropagation(); setLightboxOuverte(true); }}>
             <ZoomIn size={16} /> <span>Agrandir ({photos.length})</span>
           </button>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="logement-hero-gallery" style={{ padding: 0, overflow: 'hidden' }}>
+          <LogementCoverPlaceholder type={logement.type} secteur={logement.secteur} />
+          <div className="gallery-badges-row">
+            <span className={`badge ${estLoue ? 'badge-loue' : 'badge-available'}`}>
+              {estLoue ? 'Loué' : 'Disponible'}
+            </span>
+            {logement.statut === 'validee' && (
+              <span className="badge badge-verified"><BadgeCheck size={14} /> Vérifié par DëkuWaay</span>
+            )}
+          </div>
+        </div>
+      )}
 
       {photos && photos.length > 1 && (
         <div className="galerie-miniatures-strip">
@@ -248,9 +282,21 @@ function LogementDetail() {
               <BedDouble size={18} />
               <span><strong>{logement.chambres}</strong> Chambre(s)</span>
             </div>
+            {logement.salons > 0 && (
+              <div className="spec-pill">
+                <Sofa size={18} />
+                <span><strong>{logement.salons}</strong> Salon(s)</span>
+              </div>
+            )}
             <div className="spec-pill">
-              <Sofa size={18} />
-              <span><strong>{logement.salons}</strong> Salon(s)</span>
+              <Bath size={18} />
+              <span>
+                {logement.salleDeBainPrivee === false ? (
+                  <strong>SDB commune</strong>
+                ) : (
+                  <><strong>{logement.sallesDeBain || 1}</strong> Salle(s) de bain</>
+                )}
+              </span>
             </div>
             <div className="spec-pill">
               <ShieldCheck size={18} />
@@ -275,6 +321,26 @@ function LogementDetail() {
               </div>
             </div>
           )}
+
+          {listeVideos.length > 0 && (
+            <div className="logement-section-block">
+              <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Video size={18} style={{ color: 'var(--color-primary)' }} /> Vidéo{listeVideos.length > 1 ? 's' : ''} du bien ({listeVideos.length})
+              </h3>
+              <div className="logement-videos-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px', marginTop: '12px' }}>
+                {listeVideos.map((vUrl, i) => (
+                  <div key={i} style={{ borderRadius: '12px', overflow: 'hidden', background: '#000', border: '1px solid var(--color-border)' }}>
+                    <video
+                      src={vUrl.startsWith('http') ? vUrl : `${API_BASE}${vUrl}`}
+                      controls
+                      preload="metadata"
+                      style={{ width: '100%', maxHeight: '220px', display: 'block' }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* COLONNE DROITE : WIDGET DE MISE EN RELATION BAILLEUR */}
@@ -286,7 +352,7 @@ function LogementDetail() {
             <div>
               <span className="landlord-role">Propriétaire Vérifié</span>
               <h4 className="landlord-name">
-                {logement.proprietairePrenom ? `${logement.proprietairePrenom} ${logement.proprietaireNom || ''}` : 'Bailleur SunuKeur'}
+                {logement.proprietairePrenom ? `${logement.proprietairePrenom} ${logement.proprietaireNom || ''}` : 'Bailleur DëkuWaay'}
               </h4>
             </div>
           </div>
@@ -358,7 +424,7 @@ function LogementDetail() {
               </div>
               <h3 style={{ margin: '0 0 8px', fontSize: '1.2rem' }}>Connectez-vous pour contacter le bailleur</h3>
               <p style={{ fontSize: '0.88rem', color: 'var(--color-text-muted)', lineHeight: 1.5, marginBottom: '22px' }}>
-                Pour envoyer votre demande sur <strong>"{logement.titre}"</strong> et être rappelé par le propriétaire, vous devez posséder un compte SunuKeur.
+                Pour envoyer votre demande sur <strong>"{logement.titre}"</strong> et être rappelé par le propriétaire, vous devez posséder un compte DëkuWaay.
               </p>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 <Link to="/connexion" className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
@@ -370,6 +436,19 @@ function LogementDetail() {
               </div>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* STICKY MOBILE CTA BAR */}
+      {!estLoue && (
+        <div className="mobile-sticky-action-bar">
+          <div className="mobile-sticky-price">
+            <span>{logement.prix.toLocaleString()} FCFA</span>
+            <small>/ mois</small>
+          </div>
+          <button className="btn-primary" onClick={handleClicInteresse} style={{ padding: '10px 20px', borderRadius: '12px' }}>
+            <Send size={16} /> Contact
+          </button>
         </div>
       )}
     </div>

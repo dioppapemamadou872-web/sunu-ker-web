@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react';
 
 const questions = [
   {
-    q: 'Comment publier une annonce sur SunuKeur ?',
+    q: 'Comment publier une annonce sur DëkuWaay ?',
     r: 'Créez un compte propriétaire, puis rendez-vous sur "Publier une annonce". Remplissez les informations de votre logement (photos, prix, description...) et soumettez. Votre annonce sera vérifiée par notre équipe avant d\'être publiée.',
   },
   {
@@ -19,7 +19,7 @@ const questions = [
     r: 'Rendez-vous dans "Mon espace", puis cliquez sur l\'icône de suppression à côté de l\'annonce concernée.',
   },
   {
-    q: 'Est-ce que l\'utilisation de SunuKeur est payante ?',
+    q: 'Est-ce que l\'utilisation de DëkuWaay est payante ?',
     r: 'Non, la publication d\'annonces et la recherche de logements sont actuellement entièrement gratuites.',
   },
 ];

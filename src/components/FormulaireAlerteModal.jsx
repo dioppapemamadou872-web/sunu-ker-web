@@ -270,10 +270,12 @@ export default function FormulaireAlerteModal({ isOpen, onClose }) {
                     <Wallet size={13} style={{ display: 'inline', marginRight: '4px' }} /> Budget Maximum (FCFA)
                   </label>
                   <input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     placeholder="Ex: 150000"
                     value={budgetMax}
-                    onChange={(e) => setBudgetMax(e.target.value)}
+                    onChange={(e) => setBudgetMax(e.target.value.replace(/\D/g, ''))}
                     style={{
                       width: '100%',
                       padding: '0.6rem 0.75rem',

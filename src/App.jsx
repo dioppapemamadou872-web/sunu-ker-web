@@ -16,10 +16,14 @@ import InscriptionProprietaire from './pages/InscriptionProprietaire';
 import ConnexionProprietaire from './pages/ConnexionProprietaire';
 import MonEspace from './pages/MonEspace';
 import CreerAlerte from './pages/CreerAlerte';
+import FAQ from './pages/FAQ';
+import NotFound from './pages/NotFound';
+import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <div className="app">
+      <ScrollToTop />
       <Navbar />
       <div className="app-content">
         <Routes>
@@ -29,6 +33,7 @@ function App() {
           <Route path="/publier" element={<Publier />} />
           <Route path="/creer-alerte" element={<CreerAlerte />} />
           <Route path="/alerte" element={<CreerAlerte />} />
+          <Route path="/faq" element={<FAQ />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/*" element={<Admin />} />
           <Route path="/contact/admin" element={<Navigate to="/admin" replace />} />
@@ -40,7 +45,7 @@ function App() {
           <Route path="/inscription" element={<InscriptionProprietaire />} />
           <Route path="/connexion" element={<ConnexionProprietaire />} />
           <Route path="/mon-espace" element={<MonEspace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
       <Footer />

@@ -63,23 +63,30 @@ export default function CreerAlerte() {
 
   const inputStyle = {
     width: '100%',
-    padding: '0.75rem 0.9rem',
+    height: '46px',
+    padding: '0.75rem 0.85rem',
     borderRadius: '12px',
     border: '1px solid var(--color-border)',
     backgroundColor: 'var(--color-surface)',
     color: 'var(--color-text)',
-    fontSize: '0.9rem',
+    fontSize: '0.88rem',
     outline: 'none',
     boxSizing: 'border-box',
     transition: 'border-color 0.2s, box-shadow 0.2s'
   };
 
   const labelStyle = {
-    display: 'block',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
     fontSize: '0.85rem',
     fontWeight: 600,
     color: 'var(--color-text)',
-    marginBottom: '0.4rem'
+    marginBottom: '0.4rem',
+    minHeight: '22px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
   };
 
   return (
@@ -195,10 +202,10 @@ export default function CreerAlerte() {
                   <Sparkles size={18} color="#2563eb" /> 1. Critères du logement
                 </h3>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                  <div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem', alignItems: 'start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={labelStyle}>
-                      <MapPin size={14} style={{ display: 'inline', marginRight: '4px' }} /> Secteur / Quartier
+                      <MapPin size={14} style={{ flexShrink: 0 }} /> Secteur
                     </label>
                     <select
                       value={secteur}
@@ -212,9 +219,9 @@ export default function CreerAlerte() {
                     </select>
                   </div>
 
-                  <div>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <label style={labelStyle}>
-                      <Building2 size={14} style={{ display: 'inline', marginRight: '4px' }} /> Type de bien
+                      <Building2 size={14} style={{ flexShrink: 0 }} /> Type de bien
                     </label>
                     <select
                       value={typeLogement}

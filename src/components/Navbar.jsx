@@ -22,6 +22,24 @@ function Navbar() {
   const [notifsOuvertes, setNotifsOuvertes] = useState(false);
   const [demandesNouvelles, setDemandesNouvelles] = useState([]);
   const notifRef = useRef(null);
+  const navRef = useRef(null);
+
+  useEffect(() => {
+    if (!menuOuvert) return;
+
+    function handleOutsideClick(e) {
+      if (navRef.current && !navRef.current.contains(e.target)) {
+        setMenuOuvert(false);
+      }
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    document.addEventListener('touchstart', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+      document.removeEventListener('touchstart', handleOutsideClick);
+    };
+  }, [menuOuvert]);
 
   useEffect(() => {
     if (!afficherControlesAdmin) return;
@@ -73,31 +91,44 @@ function Navbar() {
   }
 
   return (
-    <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`}>
-      <Link to="/" className="navbar-logo">
-        <img src={logoIcon} alt="DëkuWaay" className="logo-icon" />
-        <span className="navbar-brand"><span className="logo-sunu">Dëku</span><span className="logo-keur">Waay</span></span>
-      </Link>
+    <>
+      {menuOuvert && (
+        <div
+          className="navbar-backdrop"
+          onClick={() => setMenuOuvert(false)}
+          title="Fermer le menu"
+        />
+      )}
 
-      <div className={`navbar-links ${menuOuvert ? 'ouvert' : ''}`}>
-        <Link to="/logements" onClick={() => setMenuOuvert(false)}>Logements</Link>
-        <Link to="/publier" onClick={() => setMenuOuvert(false)}>Publier une annonce</Link>
-        <Link to="/a-propos" onClick={() => setMenuOuvert(false)}>À propos</Link>
-        <Link to="/contact" onClick={() => setMenuOuvert(false)}>Contact</Link>
+      <nav className={`navbar ${scrolled ? 'navbar-scrolled' : ''}`} ref={navRef}>
+        <Link to="/" className="navbar-logo" onClick={() => setMenuOuvert(false)}>
+          <img src={logoIcon} alt="DëkuWaay" className="logo-icon" />
+          <span className="navbar-brand"><span className="logo-sunu">Dëku</span><span className="logo-keur">Waay</span></span>
+        </Link>
 
-        {!afficherControlesAdmin && (
-          estConnecte ? (
-            <Link to="/mon-espace" onClick={() => setMenuOuvert(false)} className="navbar-user-link navbar-user-link-mobile">
-              <span className="navbar-avatar">
-                {photoProfil ? <img src={`${API_BASE}${photoProfil}`} alt={prenom} /> : <User size={14} />}
-              </span>
-              {prenom}
-            </Link>
-          ) : (
-            <Link to="/connexion" onClick={() => setMenuOuvert(false)}>Connexion</Link>
-          )
-        )}
-      </div>
+        <div className={`navbar-links ${menuOuvert ? 'ouvert' : ''}`}>
+          <Link to="/logements" onClick={() => setMenuOuvert(false)}>Logements</Link>
+          <Link to="/publier" onClick={() => setMenuOuvert(false)}>Publier une annonce</Link>
+          <Link to="/creer-alerte" onClick={() => setMenuOuvert(false)} className="navbar-link-alerte-mobile">
+            <Bell size={16} style={{ verticalAlign: 'middle', marginRight: '6px' }} />
+            <span>Créer une alerte</span>
+          </Link>
+          <Link to="/a-propos" onClick={() => setMenuOuvert(false)}>À propos</Link>
+          <Link to="/contact" onClick={() => setMenuOuvert(false)}>Contact</Link>
+
+          {!afficherControlesAdmin && (
+            estConnecte ? (
+              <Link to="/mon-espace" onClick={() => setMenuOuvert(false)} className="navbar-user-link navbar-user-link-mobile">
+                <span className="navbar-avatar">
+                  {photoProfil ? <img src={`${API_BASE}${photoProfil}`} alt={prenom} /> : <User size={14} />}
+                </span>
+                {prenom}
+              </Link>
+            ) : (
+              <Link to="/connexion" onClick={() => setMenuOuvert(false)}>Connexion</Link>
+            )
+          )}
+        </div>
 
       <div className="navbar-actions">
         {afficherControlesAdmin ? (
@@ -204,6 +235,7 @@ function Navbar() {
         </button>
       </div>
     </nav>
+    </>
   );
 }
 

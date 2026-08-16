@@ -8395,6 +8395,11 @@ input[inputmode="numeric"] {
   cursor: pointer;
 }
 
+/* NAVBAR LINK ALERTE MOBILE (MASQUÉ SUR DESKTOP / VISIBLE DANS LE MENU HAMBURGER SUR MOBILE) */
+.navbar-link-alerte-mobile {
+  display: none !important;
+}
+
 @media (max-width: 768px) {
   .navbar-btn-alerte {
     display: none !important;

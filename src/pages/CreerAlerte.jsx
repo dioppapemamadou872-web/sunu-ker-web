@@ -238,7 +238,7 @@ export default function CreerAlerte() {
 
                 <div>
                   <label style={labelStyle}>
-                    <Wallet size={14} style={{ display: 'inline', marginRight: '4px' }} /> Loyer Maximum Mensuel (FCFA)
+                    <Wallet size={16} style={{ flexShrink: 0 }} /> Loyer Maximum Mensuel (FCFA)
                   </label>
                   <input
                     type="text"

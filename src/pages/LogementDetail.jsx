@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import {
   ArrowLeft, MapPin, BedDouble, Sofa, BadgeCheck, Heart, Share2, X,
   ChevronLeft, ChevronRight, ZoomIn, Calendar, Lock, UserCheck,
-  Send, CheckCircle2, ShieldCheck, Video, Bath
+  Send, CheckCircle2, ShieldCheck, Video, Bath, Copy
 } from 'lucide-react';
 import { useLogements } from '../context/LogementsContext';
 import { useFavoris } from '../context/FavorisContext';
@@ -135,6 +135,12 @@ function LogementDetail() {
     setEnvoye(true);
   }
 
+  async function copierLienDirect() {
+    await navigator.clipboard.writeText(window.location.href);
+    setLienCopie(true);
+    setTimeout(() => setLienCopie(false), 2500);
+  }
+
   async function partager() {
     const url = window.location.href;
     if (navigator.share) {
@@ -144,9 +150,7 @@ function LogementDetail() {
         // annulé
       }
     } else {
-      await navigator.clipboard.writeText(url);
-      setLienCopie(true);
-      setTimeout(() => setLienCopie(false), 2000);
+      await copierLienDirect();
     }
   }
 
@@ -166,6 +170,9 @@ function LogementDetail() {
         </Link>
 
         <div className="logement-actions-top">
+          <button className="icon-action-btn" onClick={copierLienDirect} title="Copier le lien direct de l'annonce">
+            <Copy size={17} />
+          </button>
           <button className="icon-action-btn" onClick={partager} title="Partager cette annonce">
             <Share2 size={18} />
           </button>

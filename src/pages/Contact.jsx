@@ -106,7 +106,10 @@ function Contact() {
         {/* FORM CARD (STATIC FOR ZERO SCROLL FLICKER/JUMP) */}
         <div className="card contact-card-right">
           <h3>Formulaire de message</h3>
-          <p className="card-subtext">Remplissez ce formulaire, nous vous répondrons sous 24 heures.</p>
+          <p className="card-subtext">
+            Remplissez ce formulaire, nous vous répondrons sous 24 heures.
+            <em style={{ display: 'block', marginTop: '4px', fontSize: '0.78rem', color: 'var(--color-text-muted)', fontStyle: 'italic' }}>* Les champs marqués d'une astérisque sont obligatoires.</em>
+          </p>
 
           {envoye ? (
             <div className="alert-success-box text-center" style={{ padding: '32px 20px' }}>

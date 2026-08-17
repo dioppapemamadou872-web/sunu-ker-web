@@ -129,6 +129,9 @@ export default function CreerAlerte() {
           <p style={{ margin: 0, opacity: 0.9, fontSize: '1rem', maxWidth: '520px', marginLeft: 'auto', marginRight: 'auto', lineHeight: 1.5 }}>
             Recevez une notification instantanée sur WhatsApp dès qu'un bien correspondant à vos critères est publié sur DëkuWaay.
           </p>
+          <span style={{ display: 'inline-block', marginTop: '12px', fontSize: '0.78rem', opacity: 0.85, fontStyle: 'italic', backgroundColor: 'rgba(255, 255, 255, 0.15)', padding: '4px 12px', borderRadius: '12px' }}>
+            * Les champs marqués d'une astérisque sont obligatoires
+          </span>
         </div>
 
         {/* Form Container */}

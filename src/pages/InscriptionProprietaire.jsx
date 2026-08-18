@@ -65,7 +65,7 @@ function InscriptionProprietaire() {
       <form onSubmit={handleSubmit} className="auth-form-body">
         <div className="form-row-2">
           <div className="form-group">
-            <label>Prénom</label>
+            <label>Prénom *</label>
             <input
               type="text"
               value={prenom}
@@ -75,7 +75,7 @@ function InscriptionProprietaire() {
             />
           </div>
           <div className="form-group">
-            <label>Nom</label>
+            <label>Nom *</label>
             <input
               type="text"
               value={nom}
@@ -87,7 +87,7 @@ function InscriptionProprietaire() {
         </div>
 
         <div className="form-group">
-          <label>Numéro de téléphone principal (9 chiffres)</label>
+          <label>Numéro de téléphone principal *</label>
           <ChampTelephone value={telephone} onChange={setTelephone} required />
         </div>
 
@@ -102,13 +102,13 @@ function InscriptionProprietaire() {
 
         {!memeWhatsapp && (
           <div className="form-group" style={{ marginTop: '10px' }}>
-            <label>Numéro WhatsApp (9 chiffres)</label>
+            <label>Numéro WhatsApp *</label>
             <ChampTelephone value={whatsapp} onChange={setWhatsapp} required />
           </div>
         )}
 
         <div className="form-group" style={{ marginTop: '12px' }}>
-          <label>Mot de passe (8 caractères minimum)</label>
+          <label>Mot de passe (8 caractères minimum) *</label>
           <ChampMotDePasse
             value={motDePasse}
             onChange={(e) => setMotDePasse(e.target.value)}
@@ -118,7 +118,7 @@ function InscriptionProprietaire() {
         </div>
 
         <div className="form-group">
-          <label>Confirmer le mot de passe</label>
+          <label>Confirmer le mot de passe *</label>
           <ChampMotDePasse
             value={confirmMotDePasse}
             onChange={(e) => setConfirmMotDePasse(e.target.value)}

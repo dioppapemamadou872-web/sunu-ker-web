@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Bell, CheckCircle2, AlertCircle, Sparkles, Send, MapPin, Building2, Wallet, ShieldCheck } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Bell, CheckCircle2, AlertCircle, Sparkles, Send, MapPin, Building2, Wallet, ShieldCheck, X, ChevronDown, Home } from 'lucide-react';
 import { API_BASE, secteurs, typesLogement } from '../data/logements';
 import ChampTelephone from '../components/ChampTelephone';
 
@@ -11,23 +11,59 @@ export default function CreerAlerte() {
   const [memeWhatsapp, setMemeWhatsapp] = useState(true);
   const [email, setEmail] = useState('');
   const [secteur, setSecteur] = useState('Tous');
+  const [rechercheSecteur, setRechercheSecteur] = useState('');
+  const [menuSecteurOuvert, setMenuSecteurOuvert] = useState(false);
+  const secteurRef = useRef(null);
+
   const [typeLogement, setTypeLogement] = useState('Tous');
+  const [menuTypeOuvert, setMenuTypeOuvert] = useState(false);
+  const typeRef = useRef(null);
+
   const [budgetMax, setBudgetMax] = useState('');
   
   const [chargement, setChargement] = useState(false);
   const [succes, setSucces] = useState(false);
   const [erreur, setErreur] = useState('');
 
+  const suggestionsSecteurs = secteurs.filter((s) =>
+    s.toLowerCase().includes(rechercheSecteur.toLowerCase())
+  );
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (secteurRef.current && !secteurRef.current.contains(event.target)) {
+        setMenuSecteurOuvert(false);
+      }
+      if (typeRef.current && !typeRef.current.contains(event.target)) {
+        setMenuTypeOuvert(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErreur('');
     
+    if (!prenom.trim()) {
+      setErreur('Veuillez indiquer votre prénom.');
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+      return;
+    }
     if (!nom.trim()) {
       setErreur('Veuillez indiquer votre nom.');
+      window.scrollTo({ top: 200, behavior: 'smooth' });
       return;
     }
     if (!telephone || telephone.length !== 9) {
       setErreur('Veuillez entrer un numéro de téléphone valide à 9 chiffres.');
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+      return;
+    }
+    if (!memeWhatsapp && (!whatsapp || whatsapp.length !== 9)) {
+      setErreur('Veuillez entrer un numéro WhatsApp valide à 9 chiffres.');
+      window.scrollTo({ top: 200, behavior: 'smooth' });
       return;
     }
 
@@ -54,8 +90,10 @@ export default function CreerAlerte() {
       }
 
       setSucces(true);
+      window.scrollTo({ top: 150, behavior: 'smooth' });
     } catch (err) {
       setErreur(err.message || 'Une erreur est survenue.');
+      window.scrollTo({ top: 200, behavior: 'smooth' });
     } finally {
       setChargement(false);
     }
@@ -206,36 +244,133 @@ export default function CreerAlerte() {
                 </h3>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem', alignItems: 'start' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }} ref={secteurRef}>
                     <label style={labelStyle}>
                       <MapPin size={14} style={{ flexShrink: 0 }} /> Secteur
                     </label>
-                    <select
-                      value={secteur}
-                      onChange={(e) => setSecteur(e.target.value)}
-                      style={inputStyle}
-                    >
-                      <option value="Tous">Tous les secteurs</option>
-                      {secteurs.map((sec) => (
-                        <option key={sec} value={sec}>{sec}</option>
-                      ))}
-                    </select>
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        type="text"
+                        placeholder="Rechercher un quartier..."
+                        value={rechercheSecteur}
+                        onFocus={() => setMenuSecteurOuvert(true)}
+                        onChange={(e) => {
+                          setRechercheSecteur(e.target.value);
+                          setSecteur(e.target.value || 'Tous');
+                          setMenuSecteurOuvert(true);
+                        }}
+                        style={{ ...inputStyle, paddingRight: rechercheSecteur ? '32px' : '0.85rem' }}
+                      />
+                      {rechercheSecteur && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRechercheSecteur('');
+                            setSecteur('Tous');
+                            setMenuSecteurOuvert(false);
+                          }}
+                          style={{
+                            position: 'absolute',
+                            right: '10px',
+                            border: 'none',
+                            background: 'transparent',
+                            cursor: 'pointer',
+                            color: 'var(--color-text-muted)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '2px'
+                          }}
+                        >
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* MENU AUTOCOMPLETION DES SECTEURS */}
+                    {menuSecteurOuvert && (
+                      <div className="search-autocomplete-dropdown" style={{ top: 'calc(100% + 4px)', left: 0, right: 0, minWidth: '100%', maxWidth: '100%' }}>
+                        <div
+                          className={`autocomplete-item ${secteur === 'Tous' ? 'selected' : ''}`}
+                          onClick={() => {
+                            setSecteur('Tous');
+                            setRechercheSecteur('');
+                            setMenuSecteurOuvert(false);
+                          }}
+                        >
+                          <MapPin size={14} color="var(--color-primary)" />
+                          <span>Tous les secteurs</span>
+                        </div>
+                        {suggestionsSecteurs.length > 0 ? (
+                          suggestionsSecteurs.map((sec) => (
+                            <div
+                              key={sec}
+                              className={`autocomplete-item ${sec === secteur ? 'selected' : ''}`}
+                              onClick={() => {
+                                setSecteur(sec);
+                                setRechercheSecteur(sec);
+                                setMenuSecteurOuvert(false);
+                              }}
+                            >
+                              <MapPin size={14} color="var(--color-text-muted)" />
+                              <span>{sec}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="autocomplete-item-empty">
+                            Aucun secteur correspondant
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
 
-                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', position: 'relative' }} ref={typeRef}>
                     <label style={labelStyle}>
                       <Building2 size={14} style={{ flexShrink: 0 }} /> Type de bien
                     </label>
-                    <select
-                      value={typeLogement}
-                      onChange={(e) => setTypeLogement(e.target.value)}
-                      style={inputStyle}
+                    <div
+                      onClick={() => setMenuTypeOuvert(!menuTypeOuvert)}
+                      style={{
+                        ...inputStyle,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        userSelect: 'none'
+                      }}
                     >
-                      <option value="Tous">Tous les types</option>
-                      {typesLogement.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
+                      <span>{typeLogement === 'Tous' ? 'Tous les types' : typeLogement}</span>
+                      <ChevronDown size={15} style={{ color: 'var(--color-text-muted)', transition: 'transform 0.2s', transform: menuTypeOuvert ? 'rotate(180deg)' : 'none' }} />
+                    </div>
+
+                    {/* MENU DROPDOWN TYPE DE BIEN */}
+                    {menuTypeOuvert && (
+                      <div className="search-autocomplete-dropdown" style={{ top: 'calc(100% + 4px)', left: 0, right: 0, minWidth: '100%', maxWidth: '100%' }}>
+                        <div
+                          className={`autocomplete-item ${typeLogement === 'Tous' ? 'selected' : ''}`}
+                          onClick={() => {
+                            setTypeLogement('Tous');
+                            setMenuTypeOuvert(false);
+                          }}
+                        >
+                          <Building2 size={14} color="var(--color-primary)" />
+                          <span>Tous les types</span>
+                        </div>
+                        {typesLogement.map((t) => (
+                          <div
+                            key={t}
+                            className={`autocomplete-item ${t === typeLogement ? 'selected' : ''}`}
+                            onClick={() => {
+                              setTypeLogement(t);
+                              setMenuTypeOuvert(false);
+                            }}
+                          >
+                            <Home size={14} color="var(--color-text-muted)" />
+                            <span>{t}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
 
@@ -268,12 +403,13 @@ export default function CreerAlerte() {
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                   <div>
-                    <label style={labelStyle}>Prénom</label>
+                    <label style={labelStyle}>Prénom *</label>
                     <input
                       type="text"
                       placeholder="Mamadou"
                       value={prenom}
                       onChange={(e) => setPrenom(e.target.value)}
+                      required
                       style={inputStyle}
                     />
                   </div>
@@ -292,7 +428,7 @@ export default function CreerAlerte() {
                 </div>
 
                 <div style={{ marginBottom: '1rem' }}>
-                  <label style={labelStyle}>Téléphone (Sénégal - 9 chiffres) *</label>
+                  <label style={labelStyle}>Téléphone *</label>
                   <ChampTelephone
                     value={telephone}
                     valeur={telephone}
@@ -315,7 +451,7 @@ export default function CreerAlerte() {
 
                 {!memeWhatsapp && (
                   <div style={{ marginBottom: '1rem' }}>
-                    <label style={labelStyle}>Numéro WhatsApp</label>
+                    <label style={labelStyle}>Numéro WhatsApp *</label>
                     <ChampTelephone
                       value={whatsapp}
                       valeur={whatsapp}
@@ -336,6 +472,24 @@ export default function CreerAlerte() {
                   />
                 </div>
               </div>
+
+              {erreur && (
+                <div style={{
+                  backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                  border: '1px solid var(--color-error, #ef4444)',
+                  color: 'var(--color-error, #ef4444)',
+                  padding: '0.85rem 1rem',
+                  borderRadius: '12px',
+                  fontSize: '0.925rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  fontWeight: 600
+                }}>
+                  <AlertCircle size={20} style={{ flexShrink: 0 }} />
+                  <span>{erreur}</span>
+                </div>
+              )}
 
               {/* Submit */}
               <button

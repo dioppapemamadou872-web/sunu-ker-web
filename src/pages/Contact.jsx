@@ -132,7 +132,7 @@ function Contact() {
           ) : (
             <form onSubmit={handleSubmit} className="contact-form">
               <div className="form-group">
-                <label htmlFor="nom">Nom complet</label>
+                <label htmlFor="nom">Nom complet *</label>
                 <input
                   id="nom"
                   type="text"
@@ -144,7 +144,7 @@ function Contact() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="email">Adresse email</label>
+                <label htmlFor="email">Adresse email *</label>
                 <input
                   id="email"
                   type="email"
@@ -156,7 +156,7 @@ function Contact() {
               </div>
 
               <div className="form-group">
-                <label htmlFor="message">Message</label>
+                <label htmlFor="message">Message *</label>
                 <textarea
                   id="message"
                   rows={4}

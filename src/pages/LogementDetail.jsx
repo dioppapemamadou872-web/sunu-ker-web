@@ -57,13 +57,15 @@ function LogementDetail() {
 
   const [indexActif, setIndexActif] = useState(0);
   const [lightboxOuverte, setLightboxOuverte] = useState(false);
-
   const [modalCompteRequis, setModalCompteRequis] = useState(false);
   const [afficherFormulaire, setAfficherFormulaire] = useState(false);
   const [nom, setNom] = useState('');
   const [telephone, setTelephone] = useState('');
   const [envoye, setEnvoye] = useState(false);
   const [lienCopie, setLienCopie] = useState(false);
+
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
   // Pré-remplir le nom si l'utilisateur est connecté
   useEffect(() => {
@@ -194,6 +196,17 @@ function LogementDetail() {
           className="logement-hero-gallery"
           style={{ backgroundImage: `url(${imageActuelle})` }}
           onClick={() => setLightboxOuverte(true)}
+          onTouchStart={(e) => {
+            setTouchEnd(null);
+            setTouchStart(e.targetTouches[0].clientX);
+          }}
+          onTouchMove={(e) => setTouchEnd(e.targetTouches[0].clientX)}
+          onTouchEnd={() => {
+            if (!touchStart || !touchEnd) return;
+            const distance = touchStart - touchEnd;
+            if (distance > 40) imageSuivante();
+            if (distance < -40) imagePrecedente();
+          }}
         >
           <div className="gallery-badges-row">
             <span className={`badge ${estLoue ? 'badge-loue' : 'badge-available'}`}>
@@ -204,6 +217,19 @@ function LogementDetail() {
             )}
             {nouveau && <span className="badge badge-nouveau">Nouveau</span>}
           </div>
+
+          {/* DOTS DE PAGINATION SMARTPHONE */}
+          {photos.length > 1 && (
+            <div className="gallery-pagination-dots" onClick={(e) => e.stopPropagation()}>
+              {photos.map((_, i) => (
+                <span
+                  key={i}
+                  className={`gallery-dot ${i === indexActif ? 'active' : ''}`}
+                  onClick={() => setIndexActif(i)}
+                />
+              ))}
+            </div>
+          )}
 
           <button className="galerie-zoom-btn" onClick={(e) => { e.stopPropagation(); setLightboxOuverte(true); }}>
             <ZoomIn size={16} /> <span>Agrandir ({photos.length})</span>
@@ -239,6 +265,9 @@ function LogementDetail() {
       {/* LIGHTBOX FULLSCREEN */}
       {lightboxOuverte && photos && (
         <div className="lightbox-overlay" onClick={() => setLightboxOuverte(false)}>
+          <div className="lightbox-counter-badge" onClick={(e) => e.stopPropagation()}>
+            📸 Photo {indexActif + 1} / {photos.length}
+          </div>
           <button className="lightbox-close" onClick={() => setLightboxOuverte(false)}>
             <X size={24} />
           </button>
@@ -393,7 +422,7 @@ function LogementDetail() {
                 />
               </div>
               <div className="form-group">
-                <label>Votre numéro de téléphone (9 chiffres)</label>
+                <label>Votre numéro de téléphone *</label>
                 <ChampTelephone value={telephone} onChange={setTelephone} required />
               </div>
               <button type="submit" className="btn-primary auth-submit-btn" disabled={telephone.length !== 9}>

@@ -574,7 +574,7 @@ function MonEspace() {
               </div>
 
               <div className="form-group">
-                <label>Téléphone principal (9 chiffres)</label>
+                <label>Téléphone principal</label>
                 <ChampTelephone
                   value={profil.telephone}
                   onChange={(valeur) => setProfil((p) => ({ ...p, telephone: valeur }))}
@@ -593,7 +593,7 @@ function MonEspace() {
 
               {!profil.memeWhatsapp && (
                 <div className="form-group" style={{ marginTop: '12px' }}>
-                  <label>Numéro WhatsApp (9 chiffres)</label>
+                  <label>Numéro WhatsApp</label>
                   <ChampTelephone
                     value={profil.whatsapp}
                     onChange={(valeur) => setProfil((p) => ({ ...p, whatsapp: valeur }))}

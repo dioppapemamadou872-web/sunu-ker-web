@@ -339,7 +339,7 @@ export default function FormulaireAlerteModal({ isOpen, onClose }) {
 
                 <div style={{ marginBottom: '0.85rem' }}>
                   <label style={{ display: 'block', fontSize: '0.825rem', fontWeight: 600, color: '#475569', marginBottom: '0.35rem' }}>
-                    Téléphone (Sénégal - 9 chiffres) *
+                    Téléphone *
                   </label>
                   <ChampTelephone
                     value={telephone}

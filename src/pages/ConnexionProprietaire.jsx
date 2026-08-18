@@ -35,12 +35,12 @@ function ConnexionProprietaire() {
 
       <form onSubmit={handleSubmit} className="auth-form-body">
         <div className="form-group">
-          <label>Numéro de téléphone</label>
+          <label>Numéro de téléphone *</label>
           <ChampTelephone value={telephone} onChange={setTelephone} required />
         </div>
 
         <div className="form-group">
-          <label>Mot de passe</label>
+          <label>Mot de passe *</label>
           <ChampMotDePasse value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} required />
         </div>
 

@@ -28,9 +28,9 @@ function FormulaireLogement({ onPublier }) {
   const [secteur, setSecteur] = useState(secteurs[0]);
   const [type, setType] = useState(typesLogement[0]);
   const [prix, setPrix] = useState('');
-  const [chambres, setChambres] = useState(1);
-  const [salons, setSalons] = useState(1);
-  const [sallesDeBain, setSallesDeBain] = useState(1);
+  const [chambres, setChambres] = useState('');
+  const [salons, setSalons] = useState('');
+  const [sallesDeBain, setSallesDeBain] = useState('');
   const [salleDeBainPrivee, setSalleDeBainPrivee] = useState('oui');
   const [typeCuisine, setTypeCuisine] = useState('privee');
 
@@ -48,16 +48,9 @@ function FormulaireLogement({ onPublier }) {
 
   function handleChangerType(nouveauType) {
     setType(nouveauType);
-    const lower = nouveauType.toLowerCase();
-    if (lower === 'studio' || lower === 'chambre') {
-      setChambres(1);
-      setSalons(0);
-      setSallesDeBain(1);
-    } else {
-      setChambres(1);
-      setSalons(1);
-      setSallesDeBain(1);
-    }
+    setChambres('');
+    setSalons('');
+    setSallesDeBain('');
   }
 
   function gererSelectionPhotos(e) {
@@ -75,6 +68,26 @@ function FormulaireLogement({ onPublier }) {
     } else if (photoCouvertureIndex > index) {
       setPhotoCouvertureIndex((prev) => prev - 1);
     }
+  }
+
+  function deplacerPhoto(index, direction) {
+    const cible = direction === 'gauche' ? index - 1 : index + 1;
+    if (cible < 0 || cible >= photos.length) return;
+
+    const nouvellesPhotos = [...photos];
+    const nouveauxPreviews = [...previews];
+
+    const tempPhoto = nouvellesPhotos[index];
+    nouvellesPhotos[index] = nouvellesPhotos[cible];
+    nouvellesPhotos[cible] = tempPhoto;
+
+    const tempPrev = nouveauxPreviews[index];
+    nouveauxPreviews[index] = nouveauxPreviews[cible];
+    nouveauxPreviews[cible] = tempPrev;
+
+    setPhotos(nouvellesPhotos);
+    setPreviews(nouveauxPreviews);
+    setPhotoCouvertureIndex(0);
   }
 
   function gererSelectionVideos(e) {
@@ -187,8 +200,41 @@ function FormulaireLogement({ onPublier }) {
 
   const typeLower = type.toLowerCase();
 
+  let scoreQualite = 0;
+  if (type) scoreQualite += 15;
+  if (titre.trim().length >= 10) scoreQualite += 20;
+  if (secteur) scoreQualite += 15;
+  if (prix && Number(prix) > 0) scoreQualite += 15;
+  if (description.trim().length >= 30) scoreQualite += 15;
+  if (photos.length >= 1) scoreQualite += 10;
+  if (photos.length >= 3) scoreQualite += 10;
+
   return (
     <div>
+      {/* SCORE QUALITE WIDGET */}
+      <div className="annonce-quality-widget">
+        <div className="quality-header">
+          <span className="quality-title">
+            <Star size={16} fill="var(--color-primary)" color="var(--color-primary)" /> Qualité de votre annonce :
+          </span>
+          <span className="quality-percent">{scoreQualite}%</span>
+        </div>
+        <div className="quality-bar-track">
+          <div
+            className="quality-bar-fill"
+            style={{
+              width: `${scoreQualite}%`,
+              backgroundColor: scoreQualite < 50 ? '#ef4444' : scoreQualite < 80 ? '#f59e0b' : '#10b981'
+            }}
+          />
+        </div>
+        <span className="quality-advice">
+          {scoreQualite < 50 && "💡 Ajoutez au moins 3 photos et une description détaillée pour attirer plus de locataires."}
+          {scoreQualite >= 50 && scoreQualite < 80 && "👍 Bonne annonce ! Remplissez tous les détails pour atteindre 100%."}
+          {scoreQualite >= 80 && "🌟 Excellente annonce ! Votre logement est parfaitement optimisé pour capter les locataires."}
+        </span>
+      </div>
+
       {/* STEPPER BAR */}
       <div className="stepper-v2">
         {etapes.map(({ id, label, icon: Icon }, index) => (
@@ -212,7 +258,7 @@ function FormulaireLogement({ onPublier }) {
             {/* 1. SELECTION TYPE DE LOGEMENT EN PREMIER */}
             <div className="form-group" style={{ background: 'color-mix(in srgb, var(--color-primary) 6%, transparent)', padding: '1.25rem', borderRadius: '16px', border: '1px solid color-mix(in srgb, var(--color-primary) 22%, transparent)', marginBottom: '1.25rem' }}>
               <label style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--color-text)', display: 'block', marginBottom: '0.5rem' }}>
-                Que louez-vous ?
+                Que louez-vous ? *
               </label>
               <select
                 value={type}
@@ -226,7 +272,7 @@ function FormulaireLogement({ onPublier }) {
             {/* 2. TITRE & SECTEUR */}
             <div className="form-group">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.4rem' }}>
-                <label style={{ margin: 0 }}>Titre de l'annonce</label>
+                <label style={{ margin: 0 }}>Titre de l'annonce *</label>
                 <span style={{ fontSize: '0.8rem', color: titre.length >= 50 ? '#EF4444' : 'var(--color-text-muted)' }}>
                   {titre.length}/50 caractères max
                 </span>
@@ -242,14 +288,14 @@ function FormulaireLogement({ onPublier }) {
 
             <div className="form-row-2">
               <div className="form-group">
-                <label>Quartier / Zone</label>
+                <label>Quartier / Zone *</label>
                 <select value={secteur} onChange={(e) => setSecteur(e.target.value)}>
                   {secteurs.map((s) => (<option key={s} value={s}>{s}</option>))}
                 </select>
               </div>
 
               <div className="form-group">
-                <label>Loyer par mois (FCFA)</label>
+                <label>Loyer par mois (FCFA) *</label>
                 <input
                   type="text"
                   inputMode="numeric"
@@ -271,33 +317,36 @@ function FormulaireLogement({ onPublier }) {
               {(typeLower === 'appartement' || typeLower === 'maison' || typeLower === 'villa') && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '1rem' }}>
                   <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: '0.85rem' }}>Combien de chambres ?</label>
+                    <label style={{ fontSize: '0.85rem' }}>Combien de chambres ? *</label>
                     <input
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
+                      placeholder="Ex: 2"
                       value={chambres}
-                      onChange={(e) => setChambres(e.target.value.replace(/\D/g, '') || 1)}
+                      onChange={(e) => setChambres(e.target.value.replace(/\D/g, ''))}
                     />
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: '0.85rem' }}>Combien de salons ?</label>
+                    <label style={{ fontSize: '0.85rem' }}>Combien de salons ? *</label>
                     <input
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
+                      placeholder="Ex: 1"
                       value={salons}
-                      onChange={(e) => setSalons(e.target.value.replace(/\D/g, '') || 0)}
+                      onChange={(e) => setSalons(e.target.value.replace(/\D/g, ''))}
                     />
                   </div>
                   <div className="form-group" style={{ margin: 0 }}>
-                    <label style={{ fontSize: '0.85rem' }}>Combien de douches / WC ?</label>
+                    <label style={{ fontSize: '0.85rem' }}>Combien de douches / WC ? *</label>
                     <input
                       type="text"
                       inputMode="numeric"
                       pattern="[0-9]*"
+                      placeholder="Ex: 1"
                       value={sallesDeBain}
-                      onChange={(e) => setSallesDeBain(e.target.value.replace(/\D/g, '') || 1)}
+                      onChange={(e) => setSallesDeBain(e.target.value.replace(/\D/g, ''))}
                     />
                   </div>
                 </div>
@@ -391,6 +440,22 @@ function FormulaireLogement({ onPublier }) {
                         <div key={i} className={`photo-preview-item ${estCouverture ? 'is-cover' : ''}`}>
                           <img src={url} alt={`Photo ${i + 1}`} onClick={() => setPhotoCouvertureIndex(i)} style={{ cursor: 'pointer' }} />
                           <button type="button" onClick={() => retirerPhoto(i)}><X size={14} /></button>
+                          
+                          {previews.length > 1 && (
+                            <div className="photo-reorder-nav" onClick={(e) => e.stopPropagation()}>
+                              {i > 0 && (
+                                <button type="button" className="btn-reorder-arrow" onClick={() => deplacerPhoto(i, 'gauche')} title="Déplacer vers la gauche">
+                                  <ChevronLeft size={13} />
+                                </button>
+                              )}
+                              {i < previews.length - 1 && (
+                                <button type="button" className="btn-reorder-arrow" onClick={() => deplacerPhoto(i, 'droite')} title="Déplacer vers la droite">
+                                  <ChevronRight size={13} />
+                                </button>
+                              )}
+                            </div>
+                          )}
+
                           <div
                             className={`cover-badge-tag ${estCouverture ? '' : 'set-cover'}`}
                             onClick={() => setPhotoCouvertureIndex(i)}
